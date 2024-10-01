@@ -1,0 +1,12 @@
+{
+  "name": "hangthedj",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "node server/server.js",
+    "client": "cd client && npm start"
+  },
+  "dependencies": {
+    "concurrently": "^6.0.0"
+  }
+}

@@ -1,0 +1,81 @@
+/* src/styles/HomePage.module.css */
+html {
+    background: url(../resources/audience.jpg) no-repeat center center fixed;
+    background-size: cover; /* Prevents tiling */
+    color: #FF69B4; /* Neon pink */
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+.title {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 20%;
+}
+
+.main {
+    -webkit-text-stroke: 3px #6a0dad; /* Purple outline for contrast */
+    font-family: sans;
+    font-size: 150px; /* Increased size */
+    font-weight: bolder;
+    color: #FF69B4; /* Neon pink text */
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.7); /* Shadow for depth */
+    animation: tilt-n-move-shaking 0.25s infinite;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row; /* Horizontal layout by default */
+    align-items: center;
+    justify-content: center;
+    padding-top: 5%;
+    gap: 10px;
+}
+
+.buttons button {
+    --_c: #00FFFF; /* Neon blue */
+    flex: 1;
+    min-width: 0;
+    font-size: 40px; /* Base font size */
+    font-weight: bold;
+    height: 2.5em; /* Increased height for better touch targets */
+    cursor: pointer;
+    color: #000; /* Dark text for buttons */
+    background: conic-gradient(at calc(100% - 1.3px) 0, #00FFFF 209deg, #0000 211deg) border-box;
+    border: 3px solid #00FFFF; /* Neon blue outline */
+    padding: 10px 20px;
+    transition: all 0.3s;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.buttons button:hover {
+    background-color: rgba(0, 255, 255, 0.8); /* Slightly darker on hover */
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .main {
+        font-size: 80px; /* Smaller font size for mobile */
+    }
+    .buttons {
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 5px; /* Reduce gap between buttons */
+    }
+    .buttons button {
+        font-size: 30px; /* Smaller button text */
+        width: 100%; /* Full width buttons */
+    }
+}
+
+@keyframes tilt-n-move-shaking {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(5px, 5px) rotate(5deg); }
+    50% { transform: translate(0, 0) rotate(0deg); }
+    75% { transform: translate(-5px, 5px) rotate(-5deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+}
