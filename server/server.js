@@ -1,13 +1,36 @@
+require('dotenv').config({ path: './server/.env' });
+
+
 const express = require('express');
 const cors = require('cors');
-const app = express();
-const djRoutes = require('./djRoutes'); // Update this path according to your router file
+const mongoose = require('mongoose'); // Import mongoose
 
+const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+const mongoUri = process.env.MONGODB_URI;
+
+
+const connectDB = async () => {
+    try {
+        await mongoose.connect(mongoUri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log('MongoDB connected');
+    } catch (error) {
+        console.error('MongoDB connection error:', error);
+        process.exit(1); // Exit the process with failure
+    }
+};
+
+connectDB(); // Call the function to connect to MongoDB
+
 // Use your router for the /api path
-app.use('/api', djRoutes); 
+const djRoutes = require('./djRoutes'); // Update the path accordingly
+app.use('/api', djRoutes);
 
 // Sample endpoint
 app.get('/api', (req, res) => {
