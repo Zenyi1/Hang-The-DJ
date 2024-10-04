@@ -6,6 +6,7 @@ const DjProfileForm = () => {
   const [bio, setBio] = useState('');
   const [link, setLink] = useState('');
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState(''); // To track message type (success or error)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,12 +21,14 @@ const DjProfileForm = () => {
 
       if (response.data.success) {
         setMessage('DJ profile created successfully!');
+        setMessageType('success'); // Set message type to success
         setName('');
         setBio('');
         setLink('');
       }
     } catch (error) {
       setMessage('Failed to create DJ profile. Please try again.');
+      setMessageType('error'); // Set message type to error
     }
   };
 
@@ -77,10 +80,15 @@ const DjProfileForm = () => {
         >
           Submit
         </button>
-        {message && <p className="mt-4 text-center text-white">{message}</p>}
+        {message && (
+          <p className={`mt-4 text-center ${messageType === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+            {message}
+          </p>
+        )}
       </form>
     </div>
   );
 };
 
 export default DjProfileForm;
+
