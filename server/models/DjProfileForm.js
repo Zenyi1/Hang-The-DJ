@@ -9,9 +9,11 @@ const DjProfileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  link: {
+  email: {
     type: String,
     required: true,
+    unique: true,
+    match: /.+\@.+\..+/
   },
   // Add any additional fields you need
 });

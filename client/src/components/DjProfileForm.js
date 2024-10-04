@@ -4,19 +4,38 @@ import axios from 'axios'; // Import axios if using it
 const DjProfileForm = () => {
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [link, setLink] = useState('');
+  const [email, setEmail] = useState(''); // Change link to email
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState(''); // To track message type (success or error)
+
+  const validateEmail = (email) => {
+    // Regular expression for validating an email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(''); // Clear message on submit
 
+    // Validate inputs
+    if (!name || !bio || !email) {
+      setMessage('Please fill in all fields.');
+      setMessageType('error');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setMessage('Please enter a valid email address.');
+      setMessageType('error');
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:5000/api/djs', {
         name,
         bio,
-        link,
+        email, // Send email instead of link
       });
 
       if (response.data.success) {
@@ -24,7 +43,7 @@ const DjProfileForm = () => {
         setMessageType('success'); // Set message type to success
         setName('');
         setBio('');
-        setLink('');
+        setEmail(''); // Clear email field
       }
     } catch (error) {
       setMessage('Failed to create DJ profile. Please try again.');
@@ -62,16 +81,16 @@ const DjProfileForm = () => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="link">
-            Profile Link
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            Email
           </label>
           <input
-            type="text"
-            id="link"
-            value={link}
-            onChange={(e) => setLink(e.target.value)}
+            type="email" // Change input type to email
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter a link to your profile"
+            placeholder="Enter your email"
           />
         </div>
         <button
@@ -91,4 +110,3 @@ const DjProfileForm = () => {
 };
 
 export default DjProfileForm;
-
