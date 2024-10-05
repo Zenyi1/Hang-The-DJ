@@ -1,24 +1,25 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Import axios if using it
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for React Router v6+
 
 const DjProfileForm = () => {
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
-  const [email, setEmail] = useState(''); // Change link to email
+  const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState(''); // To track message type (success or error)
+  const [messageType, setMessageType] = useState('');
+
+  const navigate = useNavigate(); // Use navigate instead of useHistory
 
   const validateEmail = (email) => {
-    // Regular expression for validating an email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage(''); // Clear message on submit
+    setMessage('');
 
-    // Validate inputs
     if (!name || !bio || !email) {
       setMessage('Please fill in all fields.');
       setMessageType('error');
@@ -35,20 +36,30 @@ const DjProfileForm = () => {
       const response = await axios.post('http://localhost:5000/api/djs', {
         name,
         bio,
-        email, // Send email instead of link
+        email,
       });
 
       if (response.data.success) {
         setMessage('DJ profile created successfully!');
-        setMessageType('success'); // Set message type to success
+        setMessageType('success');
         setName('');
         setBio('');
-        setEmail(''); // Clear email field
+        setEmail('');
       }
     } catch (error) {
-      setMessage('Failed to create DJ profile. Please try again.');
-      setMessageType('error'); // Set message type to error
+
+      if (error.response && error.response.data && error.response.data.error) {
+        setMessage('Email is already in use');
+        setMessageType('error');
+      } else{
+        setMessage('Failed to create DJ profile. Please try again.');
+        setMessageType('error');
+      }
     }
+  };
+
+  const handleLoginClick = () => {
+    navigate('/login'); // Navigate to the login page using useNavigate
   };
 
   return (
@@ -85,7 +96,7 @@ const DjProfileForm = () => {
             Email
           </label>
           <input
-            type="email" // Change input type to email
+            type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -104,6 +115,13 @@ const DjProfileForm = () => {
             {message}
           </p>
         )}
+        <button
+          type="button"
+          onClick={handleLoginClick}
+          className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 focus:outline-none focus:shadow-outline"
+        >
+          Login
+        </button>
       </form>
     </div>
   );
