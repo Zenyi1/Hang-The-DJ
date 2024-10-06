@@ -32,6 +32,12 @@ connectDB(); // Call the function to connect to MongoDB
 const djRoutes = require('./djRoutes'); // Update the path accordingly
 app.use('/api', djRoutes);
 
+const authRoutes = require('./authRoutes'); // Import the auth routes
+app.use('/auth', authRoutes);
+
+
+
+
 // Sample endpoint
 app.get('/api', (req, res) => {
     res.send('API is running...');

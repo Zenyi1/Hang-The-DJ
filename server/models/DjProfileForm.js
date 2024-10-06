@@ -15,7 +15,13 @@ const DjProfileSchema = new mongoose.Schema({
     unique: true,
     match: /.+\@.+\..+/
   },
-  // Add any additional fields you need
+  // New fields for email verification
+  verificationCode: {
+    type: String,
+  },
+  verificationCodeExpiry: {
+    type: Date,
+  },
 });
 
 // Ensure the unique index is created on the email field

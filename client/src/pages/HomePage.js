@@ -15,7 +15,7 @@ const HomePage = () => {
       <div className="flex flex-col gap-4">
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105"
-          onClick={() => navigate('/dj-profile')} // Navigate to DJ Profile form
+          onClick={() => navigate('/register')} // Navigate to DJ Profile form
         >
           I'm a DJ
         </button>
