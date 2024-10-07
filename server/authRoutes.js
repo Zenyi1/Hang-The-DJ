@@ -43,10 +43,10 @@ router.post('/login', async (req, res) => {
 
         // Send the verification code
         const mailOptions = {
-            from: 'noreplyhangthedj@gmail.com',
+            from: '"HangTheDJ 💿" <noreplyhangthedj@gmail.com>',
             to: email,
             subject: 'Your login verification code',
-            text: `Your login verification code is: ${verificationCode}`,
+            text: `Your login verification code is: ${verificationCode}\nThis code will only be valid for the next 10 minutes`,
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
