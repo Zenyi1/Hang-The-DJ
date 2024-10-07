@@ -63,26 +63,43 @@ router.post('/login', async (req, res) => {
     }
 });
 
-
 router.post('/verify', async (req, res) => {
-    const {email, verificationCode} = req.body;
+    const { email, verificationCode } = req.body;
 
-    let user = await DjProfileForm.findOne({ email });
+    console.log('Verification request received:', { email, verificationCode }); // Log incoming request
 
-    if(!user) {
-        return res.status(404).json({ message: 'User not found'});
+    try {
+        let user = await DjProfile.findOne({ email });
+
+        if (!user) {
+            console.log('User not found:', email);
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        console.log('User found:', user); // Log user data for debugging
+
+        if (user.verificationCode !== verificationCode) {
+            console.log('Invalid verification code:', { expected: user.verificationCode, received: verificationCode });
+            return res.status(400).json({ message: 'Invalid verification code' });
+        }
+
+        if (Date.now() > user.verificationCodeExpiry) {
+            console.log('Verification code expired');
+            return res.status(400).json({ message: 'Verification code expired' });
+        }
+
+        // Clear verification code after successful verification
+        user.verificationCode = undefined;
+        user.verificationCodeExpiry = undefined;
+        await user.save();
+
+        console.log('Verification successful, user logged in');
+        res.json({ success: true, message: 'Verification successful, logged in!' });
+    } catch (error) {
+        console.error('Error in verify route:', error);
+        res.status(500).json({ message: 'Server error' });
     }
-
-    if (user.verificationCode !== verificationCode || Date.now() > user.verificationCodeExpiry) {
-        return res.status(400).json({message: 'Invalid or expired verification code'});
-    }
-
-    //clear code after succesful verification
-    user.verificationCode = undefined;
-    user.verificationCodeExpiry = undefined;
-    await user.save();
-
-    res.json({ message: 'Verification succesful, logged in!'});
 });
+
 
 module.exports = router;

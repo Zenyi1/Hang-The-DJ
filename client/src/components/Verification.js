@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const VerifyLogin = () => {
   const [email, setEmail] = useState('');
-  const [code, setCode] = useState('');
+  const [verificationCode, setCode] = useState('');
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (e) => {
@@ -11,13 +11,14 @@ const VerifyLogin = () => {
     setMessage(''); // Clear previous messages
 
     try {
-      const response = await axios.post('http://localhost:5000/auth/verify', { email, code });
+      const response = await axios.post('http://localhost:5000/auth/verify', { email, verificationCode });
       if (response.data.success) {
         setMessage('Logged in successfully!');
       } else {
         setMessage('Invalid code. Please try again.');
       }
     } catch (error) {
+      console.error('Error verifying code:', error)
       setMessage('Failed to verify code. Please try again.');
     }
   };
@@ -36,7 +37,7 @@ const VerifyLogin = () => {
         <input
           type="text"
           placeholder="Enter your verification code"
-          value={code}
+          value={verificationCode}
           onChange={(e) => setCode(e.target.value)}
           required
         />
