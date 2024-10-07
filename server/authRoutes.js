@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const router = express.Router();
 const DjProfile = require('./models/DjProfileForm');
-
+const jwt = require('jsonwebtoken'); // Import JWT library
 
 
 const transporter = nodemailer.createTransport({
@@ -93,8 +93,10 @@ router.post('/verify', async (req, res) => {
         user.verificationCodeExpiry = undefined;
         await user.save();
 
+        const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, {expiresIn: '1h' });
+
         console.log('Verification successful, user logged in');
-        res.json({ success: true, message: 'Verification successful, logged in!' });
+        res.json({ success: true, message: 'Verification successful, logged in!', token });
     } catch (error) {
         console.error('Error in verify route:', error);
         res.status(500).json({ message: 'Server error' });

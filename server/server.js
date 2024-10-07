@@ -4,6 +4,7 @@ require('dotenv').config({ path: './server/.env' });
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose'); // Import mongoose
+const router = express.Router();
 
 const app = express();
 app.use(cors());
@@ -41,6 +42,13 @@ app.use('/auth', authRoutes);
 // Sample endpoint
 app.get('/api', (req, res) => {
     res.send('API is running...');
+});
+
+const authenticateToken = require('./authMiddleware');
+
+// Protected route
+router.get('/account', authenticateToken, (req, res) => {
+  res.json({ message: `Welcome to your account, ${req.user.email}!` });
 });
 
 const PORT = process.env.PORT || 5000;

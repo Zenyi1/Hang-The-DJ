@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const VerifyLogin = () => {
   const [email, setEmail] = useState('');
   const [verificationCode, setCode] = useState('');
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,6 +16,8 @@ const VerifyLogin = () => {
       const response = await axios.post('http://localhost:5000/auth/verify', { email, verificationCode });
       if (response.data.success) {
         setMessage('Logged in successfully!');
+        localStorage.setItem('token', response.data.token);
+        navigate('/account');
       } else {
         setMessage('Invalid code. Please try again.');
       }
