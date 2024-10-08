@@ -45,11 +45,29 @@ app.get('/api', (req, res) => {
 });
 
 const authenticateToken = require('./authMiddleware');
+app.use('/account', authenticateToken);
 
-// Protected route
-router.get('/account', authenticateToken, (req, res) => {
-  res.json({ message: `Welcome to your account, ${req.user.email}!` });
-});
+router.get('/account', authenticateToken, async (req, res) => {
+    try {
+      // Fetch the user data from the database using the userId from the token
+      const user = await DjProfile.findById(req.user.userId);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Send user details back to the client
+      res.json({
+        email: user.email,
+        id: user._id,
+        // Add any other relevant account details here
+      });
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
+  
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -30,6 +30,7 @@ const AccountPage = () => {
           localStorage.removeItem('token'); // Clear the token
           navigate('/login'); // Redirect to login if token is invalid
         } else {
+          console.error(error)
           setMessage('Failed to fetch account details. Please try again later.');
         }
       }
@@ -53,6 +54,7 @@ const AccountPage = () => {
       <ul>
         <li>Email: {userData.email}</li>
         <li>Account ID: {userData.id}</li>
+        <li>Bio: {userData.bio}</li>
         {/* Add more account details as needed */}
       </ul>
     </div>
