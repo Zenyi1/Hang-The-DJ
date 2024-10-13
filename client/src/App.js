@@ -6,6 +6,7 @@ import VerifyLogin from './components/Verification'; // Adjust the path as neede
 import DjProfileForm from './components/DjProfileForm';
 import ProtectedRoute from './contexts/ProtectedRoute';
 import AccountPage from './pages/AccountPage';
+import Onboard from './pages/Onboard';
 
 
 const App = () => {
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/login" element={<Login/>}/>
         <Route path="/verify" element={<VerifyLogin/>}/>
         <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+        <Route path="/onboard" element={<Onboard/>}/>
       </Routes>
     </Router>
   );
