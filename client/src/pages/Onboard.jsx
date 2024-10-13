@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <div className="container">
       <div className="banner">
-        <h2>Rocket Rides</h2>
+        <h2>HangTheDJ</h2>
       </div>
       <div className="content">
         {!connectedAccountId && <h2>Get ready for take off</h2>}
@@ -27,7 +27,7 @@ export default function Home() {
               onClick={async () => {
                 setAccountCreatePending(true);
                 setError(false);
-                fetch("/accountsetup", {
+                fetch("http://localhost:5000/accountsetup", {
                   method: "POST",
                 })
                   .then((response) => response.json())
