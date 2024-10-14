@@ -18,7 +18,7 @@ const App = () => {
         <Route path="/login" element={<Login/>}/>
         <Route path="/verify" element={<VerifyLogin/>}/>
         <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
-        <Route path="/onboard" element={<Onboard/>}/>
+        <Route path="/onboard" element={<ProtectedRoute><Onboard/></ProtectedRoute>}/>
       </Routes>
     </Router>
   );
