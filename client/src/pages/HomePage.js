@@ -1,15 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
+
 const HomePage = () => {
   const navigate = useNavigate(); // Initialize navigate
 
   return (
     <div
-      className="flex flex-col justify-center items-center min-h-screen bg-cover bg-center"
-      style={{ backgroundImage: "url('/cool-background.png')" }} 
+      className="flex flex-col justify-center items-center min-h-screen bg-cover bg-center 
+                 bg-[url('../../public/mobile-background.jpg')] md:bg-[url('../../public/desktop-background.jpg')]"
     >
-      <h1 className="text-7xl md:text-8xl font-extrabold text-white drop-shadow-lg mb-10 animate-pulse">
+      <h1 className="text-7xl md:text-8xl font-extrabold text-white drop-shadow-lg mb-10 animate-pulse animate-bounce">
         Hang The DJ
       </h1>
       <div className="flex flex-col gap-4">
