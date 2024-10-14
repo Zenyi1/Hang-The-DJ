@@ -15,6 +15,9 @@ const DjProfileSchema = new mongoose.Schema({
     unique: true,
     match: /.+\@.+\..+/
   },
+  profilePicture: {
+    type: String
+  },
   // New fields for email verification
   verificationCode: {
     type: String,
