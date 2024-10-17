@@ -23,6 +23,26 @@ router.post('/djs', async (req, res) => {
   }
 });
 
+const stripe = require('stripe')(process.env.STRIPE_TEST_KEY);
+
+router.post('/create-stripe-account', async (req, res) => {
+  try {
+    const account = await stripe.accounts.create({
+      type: 'express',
+    });
+
+    // Save the account ID to the user's profile
+    const user = await DjProfile.findById(req.body.userId);
+    user.stripeAccountId = account.id;
+    await user.save();
+
+    res.json({ accountId: account.id });
+  } catch (error) {
+    console.error('Error creating Stripe account:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // You can also add other routes to get, update, or delete DJ profiles
 
 module.exports = router;

@@ -8,6 +8,8 @@ const authRoutes = require('./authRoutes');
 const multer = require('multer');
 const path = require('path');
 const DjProfile = require('./models/DjProfileForm')
+const paymentRoutes = require('./routes/paymentRoutes');  // Payment-related routes
+
 
 const app = express();
 app.use(cors());
@@ -38,8 +40,50 @@ const upload = multer({
     }
 });
 
+
+const stripe = require("stripe")(
+  'sk_test_51Q9DpQFaIM9AbUlEBtxhyAFy5L3xwCrrZdg1MnVqBLR8CZ0ipTMUKpA1rPkuRQuNjiZA6fDdnkxXNak3ToSS1h3j005v0BRrRj',
+  {
+    apiVersion: "2023-10-16",
+  }
+);
+
+app.post('/create-checkout-session', async (req, res) => {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'T-shirt',
+            },
+            unit_amount: 1000,
+          },
+          quantity: 1,
+        },
+      ],
+      payment_intent_data: {
+        application_fee_amount: 5,
+      },
+      mode: 'payment',
+      success_url: 'localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
+    },
+    {
+      stripeAccount: '{{CONNECTED_ACCOUNT_ID}}',
+    });
+    res.status(200).json({ session });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use('/api/payments', paymentRoutes);  // Use payment routes
+
 
 // Upload endpoint
 app.post('/upload', upload.single('profilePicture'), async (req, res) => {
@@ -85,13 +129,7 @@ const connectDB = async () => {
 
 connectDB();
 
-const stripe = require("stripe")(
-    // Test API key
-    'sk_test_51Q9DpQFaIM9AbUlEBtxhyAFy5L3xwCrrZdg1MnVqBLR8CZ0ipTMUKpA1rPkuRQuNjiZA6fDdnkxXNak3ToSS1h3j005v0BRrRj',
-    {
-        apiVersion: "2023-10-16",
-    }
-);
+
 
 // Use your routers
 app.use('/account', accountRoutes);
@@ -128,6 +166,8 @@ app.post("/account_session", async (req, res) => {
 
 // Account setup endpoint
 app.post("/accountsetup", async (req, res) => {
+    console.log('Request Body:', req.body);
+
     try {
         const account = await stripe.accounts.create({
             controller: {
@@ -164,3 +204,5 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
 });
+
+

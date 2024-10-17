@@ -6,6 +6,8 @@ import VerifyLogin from './components/Verification'; // Adjust the path as neede
 import DjProfileForm from './components/DjProfileForm';
 import ProtectedRoute from './contexts/ProtectedRoute';
 import AccountPage from './pages/AccountPage';
+import PaymentPage from './pages/PaymentPage';
+import ChoosePage from './pages/whichDj';
 
 
 
@@ -18,6 +20,8 @@ const App = () => {
         <Route path="/login" element={<Login/>}/>
         <Route path="/verify" element={<VerifyLogin/>}/>
         <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+        <Route path="/pay/:djId" element={<PaymentPage/>}/>
+        <Route path="/choose" element={<ChoosePage/>}/>
       </Routes>
     </Router>
   );

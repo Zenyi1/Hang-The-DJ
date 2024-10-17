@@ -16,7 +16,7 @@ const DjProfileSchema = new mongoose.Schema({
     match: /.+\@.+\..+/
   },
   profilePicture: {
-    type: String
+    type: String,
   },
   // New fields for email verification
   verificationCode: {
@@ -25,7 +25,17 @@ const DjProfileSchema = new mongoose.Schema({
   verificationCodeExpiry: {
     type: Date,
   },
+  // New field to store Stripe connected account ID
+  stripeAccountId: {
+    type: String, // Store the connected account ID from Stripe
+  },
+  // Optional: track if the DJ has completed Stripe onboarding
+  isStripeOnboarded: {
+    type: Boolean,
+    default: false, // Initially false until onboarding is complete
+  },
 });
+
 
 // Ensure the unique index is created on the email field
 DjProfileSchema.index({ email: 1 }, { unique: true });
