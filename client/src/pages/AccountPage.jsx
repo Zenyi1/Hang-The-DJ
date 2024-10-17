@@ -17,19 +17,17 @@ const AccountPage = () => {
   const [onboardingExited, setOnboardingExited] = useState(false);
   const [error, setError] = useState(false);
   const [connectedAccountId, setConnectedAccountId] = useState();
-  const [profilePicture, setProfilePicture] = useState(null); // Initialize profilePicture state
+  const [profilePicture, setProfilePicture] = useState(null);
   const stripeConnectInstance = useStripeConnect(connectedAccountId);
 
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('token');
-
       if (!token) {
         setMessage('No token found. Please login first.');
         navigate('/login');
         return;
       }
-
       try {
         const response = await axios.get('http://localhost:5000/account', {
           headers: {
@@ -39,8 +37,6 @@ const AccountPage = () => {
         setUserData(response.data);
       } catch (error) {
         console.error('Error details:', error);
-        
-        // Handle different types of errors appropriately
         if (error.response) {
           if (error.response.status === 401 || error.response.status === 403) {
             setMessage('Session expired. Please login again.');
@@ -56,18 +52,34 @@ const AccountPage = () => {
         }
       }
     };
-
     fetchUserData();
   }, [navigate]);
 
-  
+  const handleOnboardingSuccess = async (accountId) => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/update-stripe-account', {
+        userId: userData.id, // Assuming userData contains the user's ID
+        stripeAccountId: accountId,
+      });
+      if (response.data.message) {
+        console.log(response.data.message);
+      }
+    } catch (error) {
+      console.error('Error saving Stripe account ID:', error);
+    }
+  };
+
+  const onOnboardingComplete = (accountId) => {
+    setConnectedAccountId(accountId);
+    handleOnboardingSuccess(accountId);
+  };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const formData = new FormData();
       formData.append('profilePicture', file);
-      formData.append('email', userData.email); // Add the user's email to the form data
-  
+      formData.append('email', userData.email);
       axios.post('http://localhost:5000/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -75,7 +87,7 @@ const AccountPage = () => {
         },
       })
       .then(response => {
-        const fullUrl = `http://localhost:5000${response.data.url}`; // Construct the full URL
+        const fullUrl = `http://localhost:5000${response.data.url}`;
         setProfilePicture(fullUrl);
         setUserData(prev => ({ ...prev, profilePicture: fullUrl }));
       })
@@ -86,7 +98,6 @@ const AccountPage = () => {
     }
   };
 
-  // Display error message if one exists
   if (message) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -105,7 +116,6 @@ const AccountPage = () => {
     );
   }
 
-  // Display loading state if userData is not yet fetched
   if (!userData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -116,7 +126,6 @@ const AccountPage = () => {
     );
   }
 
-  // Render the account details page
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-8">
@@ -127,10 +136,10 @@ const AccountPage = () => {
           <input type="file" accept="image/*" onChange={handleFileChange} />
         </div>
         {userData.profilePicture && (
-          <img 
+          <img
             src={userData.profilePicture}
-            alt="Profile" 
-            className="w-32 h-32 rounded-full object-cover" 
+            alt="Profile"
+            className="w-32 h-32 rounded-full object-cover"
           />
         )}
         <div className="space-y-4">
@@ -171,11 +180,9 @@ const AccountPage = () => {
                     .then((json) => {
                       setAccountCreatePending(false);
                       const { account, error } = json;
-
                       if (account) {
-                        setConnectedAccountId(account);
+                        onOnboardingComplete(account);
                       }
-
                       if (error) {
                         setError(true);
                       }
@@ -190,6 +197,7 @@ const AccountPage = () => {
             <ConnectComponentsProvider connectInstance={stripeConnectInstance}>
               <ConnectAccountOnboarding
                 onExit={() => setOnboardingExited(true)}
+                onComplete={(accountId) => onOnboardingComplete(accountId)}
               />
             </ConnectComponentsProvider>
           )}

@@ -43,6 +43,27 @@ router.post('/create-stripe-account', async (req, res) => {
   }
 });
 
+
+router.post('/update-stripe-account', async (req, res) => {
+  const { userId, stripeAccountId } = req.body;
+
+  try {
+    const user = await DjProfile.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.stripeAccountId = stripeAccountId;
+    await user.save();
+
+    res.json({ message: 'Stripe account ID updated successfully' });
+  } catch (error) {
+    console.error('Error updating Stripe account ID:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 // You can also add other routes to get, update, or delete DJ profiles
 
 module.exports = router;
