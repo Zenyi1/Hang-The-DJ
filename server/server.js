@@ -82,7 +82,7 @@ app.post('/create-checkout-session', async (req, res) => {
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use('/api/payments', paymentRoutes);  // Use payment routes
+app.use(paymentRoutes);  // Use payment routes
 
 
 // Upload endpoint

@@ -63,6 +63,18 @@ router.post('/update-stripe-account', async (req, res) => {
   }
 });
 
+router.get('/api/djs', async (req, res) => {
+  try {
+    const djs = await DjProfile.find({ stripeAccountId: { $exists: true, $ne: null } })
+      .select('name _id');
+    res.json(djs);
+  } catch (error) {
+    console.error('Error fetching DJs:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 
 // You can also add other routes to get, update, or delete DJ profiles
 

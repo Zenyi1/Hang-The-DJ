@@ -1,25 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const ChoosePage = () => {
-  const [username, setUsername] = useState('');
+  const [djs, setDjs] = useState([]);
   const navigate = useNavigate();
 
-  const handleTip = () => {
-    // Redirect to payment page with the DJ's username
-    navigate(`/pay/${username}`);
+  useEffect(() => {
+    const fetchDjs = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/api/djs');
+        setDjs(response.data);
+      } catch (error) {
+        console.error('Error fetching DJs:', error);
+      }
+    };
+    fetchDjs();
+  }, []);
+
+  const handleTip = (djId) => {
+    navigate(`/pay/${djId}`);
   };
 
   return (
     <div>
-      <h1>Welcome to Hang the DJ</h1>
-      <input
-        type="text"
-        placeholder="Enter DJ's username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <button onClick={handleTip}>Tip DJ</button>
+      <h1>Choose a DJ to Tip</h1>
+      <ul>
+        {djs.map(dj => (
+          <li key={dj._id}>
+            {dj.name} - <button onClick={() => handleTip(dj._id)}>Tip</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
