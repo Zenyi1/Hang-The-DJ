@@ -9,12 +9,13 @@ const PaymentPage = () => {
 
   useEffect(() => {
     const createCheckoutSession = async () => {
+      console.log('Attempting to create checkout session for DJ:', djId);
       try {
-        const response = await axios.post('http://localhost:5000/create-checkout-session', { djId });
-        // Redirect to Stripe Checkout
+        const response = await axios.post('http://localhost:5000/api/create-checkout-session', { djId });
+        console.log('Response received:', response.data);
         window.location.href = response.data.url;
       } catch (error) {
-        console.error('Error creating checkout session:', error);
+        console.error('Error creating checkout session:', error.response || error);
         setError('Failed to create checkout session. Please try again.');
       } finally {
         setLoading(false);

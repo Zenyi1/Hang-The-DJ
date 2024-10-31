@@ -42,47 +42,17 @@ const upload = multer({
 
 
 const stripe = require("stripe")(
-  'sk_test_51Q9DpQFaIM9AbUlEBtxhyAFy5L3xwCrrZdg1MnVqBLR8CZ0ipTMUKpA1rPkuRQuNjiZA6fDdnkxXNak3ToSS1h3j005v0BRrRj',
+  'sk_test_26PHem9AhJZvU623DfE1x4sd',
   {
     apiVersion: "2023-10-16",
   }
 );
 
-app.post('/create-checkout-session', async (req, res) => {
-  try {
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'T-shirt',
-            },
-            unit_amount: 1000,
-          },
-          quantity: 1,
-        },
-      ],
-      payment_intent_data: {
-        application_fee_amount: 5,
-      },
-      mode: 'payment',
-      success_url: 'localhost:3000/success?session_id={CHECKOUT_SESSION_ID}',
-    },
-    {
-      stripeAccount: '{{CONNECTED_ACCOUNT_ID}}',
-    });
-    res.status(200).json({ session });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
-});
 
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use(paymentRoutes);  // Use payment routes
+app.use('/api', paymentRoutes);  // Use payment routes
 
 
 // Upload endpoint

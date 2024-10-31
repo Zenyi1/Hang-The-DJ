@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
+const DjProfile = require('../models/DjProfileForm'); // Add this import
 const { createCheckoutSession } = require('../controllers/paymentcontroller');
 
-// Route for creating a checkout session
-router.post('/create-checkout-session', createCheckoutSession);
+console.log('Payment routes initialized'); // Add this log
 
+router.post('/create-checkout-session', (req, res) => {
+  console.log('Route hit!'); // Add this log
+  createCheckoutSession(req, res);
+});
 // Route to display payment form for a specific DJ
 router.get('/pay/:djId', async (req, res) => {
     const { djId } = req.params;

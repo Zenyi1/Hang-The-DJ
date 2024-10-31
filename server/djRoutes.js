@@ -23,7 +23,7 @@ router.post('/djs', async (req, res) => {
   }
 });
 
-const stripe = require('stripe')(process.env.STRIPE_TEST_KEY);
+const stripe = require('stripe')('sk_test_26PHem9AhJZvU623DfE1x4sd');
 
 router.post('/create-stripe-account', async (req, res) => {
   try {
