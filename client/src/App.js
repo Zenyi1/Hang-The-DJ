@@ -8,6 +8,8 @@ import ProtectedRoute from './contexts/ProtectedRoute';
 import AccountPage from './pages/AccountPage';
 import PaymentPage from './pages/PaymentPage';
 import ChoosePage from './pages/whichDj';
+import Success from './pages/Success';
+import Cancel from './pages/Cancel';
 
 
 
@@ -22,6 +24,8 @@ const App = () => {
         <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
         <Route path="/pay/:djId" element={<PaymentPage/>}/>
         <Route path="/choose" element={<ChoosePage/>}/>
+        <Route path="/success" element={<Success/>}/>
+        <Route path="/cancel" element={<Cancel/>}/>
       </Routes>
     </Router>
   );

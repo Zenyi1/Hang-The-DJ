@@ -1,8 +1,17 @@
+const DjProfile = require('../models/DjProfileForm'); // Add this at the top
+
+
 const createCheckoutSession = async (req, res) => {
   console.log('Endpoint hit!', new Date().toISOString());
   console.log('Request body:', req.body);
   const { djId } = req.body;
   console.log('1. Received DJ ID:', djId); // Log the incoming DJ ID
+
+  // Add this check
+  if (!process.env.CLIENT_URL) {
+    console.error('CLIENT_URL is not defined in environment variables');
+    return res.status(500).json({ message: 'Server configuration error' });
+  }
 
   const stripe = require('stripe')(process.env.STRIPE_SECRET);
   console.log('2. Stripe Secret Key:', process.env.STRIPE_SECRET); // Log the Stripe key (careful with security!)
@@ -32,6 +41,12 @@ const createCheckoutSession = async (req, res) => {
       amount: 500,
       currency: 'gbp'
     });
+
+    console.log('Creating checkout session with URLs:', {
+      success: `${process.env.CLIENT_URL}/success`,
+      cancel: `${process.env.CLIENT_URL}/cancel`
+    });
+
 
 
     const session = await stripe.checkout.sessions.create({

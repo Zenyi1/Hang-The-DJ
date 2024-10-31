@@ -42,7 +42,7 @@ const upload = multer({
 
 
 const stripe = require("stripe")(
-  'sk_test_26PHem9AhJZvU623DfE1x4sd',
+  process.env.STRIPE_TEST_KEY,
   {
     apiVersion: "2023-10-16",
   }
