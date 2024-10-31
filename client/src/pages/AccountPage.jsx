@@ -11,6 +11,11 @@ const AccountPage = () => {
   const [userData, setUserData] = useState(null);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: '',
+    bio: ''
+  });
 
   // State for account creation and onboarding
   const [accountCreatePending, setAccountCreatePending] = useState(false);
@@ -34,26 +39,54 @@ const AccountPage = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log('Fetched user data:', response.data); // Add this log
         setUserData(response.data);
+        setEditForm({
+          name: response.data.name || '',
+          bio: response.data.bio || ''
+        });
       } catch (error) {
         console.error('Error details:', error);
-        if (error.response) {
-          if (error.response.status === 401 || error.response.status === 403) {
-            setMessage('Session expired. Please login again.');
-            localStorage.removeItem('token');
-            navigate('/login');
-          } else {
-            setMessage(`Error: ${error.response.data.message || 'Failed to fetch account details'}`);
-          }
-        } else if (error.request) {
-          setMessage('No response from server. Please try again later.');
-        } else {
-          setMessage('An error occurred. Please try again later.');
-        }
+        // ... rest of your error handling
       }
     };
     fetchUserData();
   }, [navigate]);
+
+const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    try {
+      console.log('Submitting edit form:', editForm); // Add this log
+      const response = await axios.put(
+        'http://localhost:5000/account',
+        editForm,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      
+      console.log('Update response:', response.data); // Add this log
+      
+      // Update the userData state with the response data
+      setUserData(prev => ({
+        ...prev,
+        ...response.data
+      }));
+      
+      setIsEditing(false);
+      setMessage('Profile updated successfully!');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+      console.error('Update error:', error); // Add this log
+      setMessage(error.response?.data?.message || 'Failed to update profile. Please try again.');
+    }
+};
+
+
 
   const handleOnboardingSuccess = async (accountId) => {
     try {
@@ -98,19 +131,17 @@ const AccountPage = () => {
     }
   };
 
-  if (message) {
+  if (message && message.includes('login')) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
           <p className="text-center text-red-500">{message}</p>
-          {message.includes('login') && (
-            <button
-              onClick={() => navigate('/login')}
-              className="mt-4 w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
-            >
-              Go to Login
-            </button>
-          )}
+          <button
+            onClick={() => navigate('/login')}
+            className="mt-4 w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600 transition-colors duration-300"
+          >
+            Go to Login
+          </button>
         </div>
       </div>
     );
@@ -129,95 +160,177 @@ const AccountPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-8">
+      {message && !message.includes('login') && (
+        <div 
+          className={`mb-4 p-3 rounded ${
+            message.includes('Failed') 
+              ? 'bg-red-100 text-red-700' 
+              : message.includes('successfully') 
+                ? 'bg-green-100 text-green-700'
+                : 'bg-blue-100 text-blue-700'
+          }`}
+        >
+          {message}
+        </div>
+      )}
+
+        
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
           Welcome, {userData.email}!
         </h2>
-        <div>
-          <input type="file" accept="image/*" onChange={handleFileChange} />
-        </div>
-        {userData.profilePicture && (
-          <img
-            src={userData.profilePicture}
-            alt="Profile"
-            className="w-32 h-32 rounded-full object-cover"
+
+        <div className="mb-6">
+          <input 
+            type="file" 
+            accept="image/*" 
+            onChange={handleFileChange}
+            className="mb-4" 
           />
-        )}
+          {userData.profilePicture && (
+            <img
+              src={userData.profilePicture}
+              alt="Profile"
+              className="w-32 h-32 rounded-full object-cover mx-auto"
+            />
+          )}
+        </div>
+
         <div className="space-y-4">
-          <div className="border-b pb-4">
-            <h3 className="text-lg font-semibold text-gray-700">Account Details</h3>
-            <ul className="mt-2 space-y-2">
-              <li className="text-gray-600">
-                <span className="font-medium">Email:</span> {userData.email}
-              </li>
-              <li className="text-gray-600">
-                <span className="font-medium">Account ID:</span> {userData.id}
-              </li>
-              <li className="text-gray-600">
-                <span className="font-medium">Bio:</span> {userData.bio || 'No bio available'}
-              </li>
-            </ul>
-          </div>
+          {isEditing ? (
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Name</label>
+                <input
+                  type="text"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Bio</label>
+                <textarea
+                  value={editForm.bio}
+                  onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
+                  rows="4"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  className="flex-1 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div className="border-b pb-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-700">Account Details</h3>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                  Edit Profile
+                </button>
+              </div>
+              <ul className="mt-2 space-y-2">
+                <li className="text-gray-600">
+                  <span className="font-medium">Email:</span> {userData.email}
+                </li>
+                <li className="text-gray-600">
+                  <span className="font-medium">Name:</span> {' '}
+                  {userData.name ? userData.name : 'Not set'}
+                </li>
+                <li className="text-gray-600">
+                  <span className="font-medium">Bio:</span> {userData.bio || 'No bio available'}
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
       </div>
-      <div className="container">
-        <div className="banner">
-          <h2>HangTheDJ</h2>
-        </div>
-        <div className="content">
-          {!connectedAccountId && <h2>Get ready for take off</h2>}
-          {connectedAccountId && !stripeConnectInstance && <h2>Add information to start accepting money</h2>}
-          {!connectedAccountId && <p>Rocket Rides is the world's leading air travel platform: join our team of pilots to help people travel faster.</p>}
-          {!accountCreatePending && !connectedAccountId && (
-            <div>
-              <button
-                onClick={async () => {
-                  setAccountCreatePending(true);
-                  setError(false);
-                  fetch("http://localhost:5000/accountsetup", {
-                    method: "POST",
-                  })
-                    .then((response) => response.json())
-                    .then((json) => {
-                      setAccountCreatePending(false);
-                      const { account, error } = json;
-                      if (account) {
-                        onOnboardingComplete(account);
-                      }
-                      if (error) {
-                        setError(true);
-                      }
-                    });
-                }}
-              >
-                Sign up
-              </button>
-            </div>
-          )}
-          {stripeConnectInstance && (
-            <ConnectComponentsProvider connectInstance={stripeConnectInstance}>
-              <ConnectAccountOnboarding
-                onExit={() => setOnboardingExited(true)}
-                onComplete={(accountId) => onOnboardingComplete(accountId)}
-              />
-            </ConnectComponentsProvider>
-          )}
-          {error && <p className="error">Something went wrong!</p>}
-          {(connectedAccountId || accountCreatePending || onboardingExited) && (
-            <div className="dev-callout">
-              {connectedAccountId && <p>Your connected account ID is: <code className="bold">{connectedAccountId}</code></p>}
-              {accountCreatePending && <p>Creating a connected account...</p>}
-              {onboardingExited && <p>The Account Onboarding component has exited</p>}
-            </div>
-          )}
-          <div className="info-callout">
-            <p>
-              This is a sample app for Connect onboarding using the Account Onboarding embedded component. <a href="https://docs.stripe.com/connect/onboarding/quickstart?connect-onboarding-surface=embedded" target="_blank" rel="noopener noreferrer">View docs</a>
-            </p>
+
+      <div className="max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg p-8">
+        <h3 className="text-xl font-bold mb-4">Payment Setup</h3>
+        <div className="container">
+          <div className="content">
+            {!connectedAccountId && <h2>Get ready for take off</h2>}
+            {connectedAccountId && !stripeConnectInstance && (
+              <h2>Add information to start accepting money</h2>
+            )}
+            {!connectedAccountId && (
+              <p>
+                Join our team of DJs to start accepting payments for your services.
+              </p>
+            )}
+            {!accountCreatePending && !connectedAccountId && (
+              <div>
+                <button
+                  onClick={async () => {
+                    setAccountCreatePending(true);
+                    setError(false);
+                    fetch("http://localhost:5000/accountsetup", {
+                      method: "POST",
+                    })
+                      .then((response) => response.json())
+                      .then((json) => {
+                        setAccountCreatePending(false);
+                        const { account, error } = json;
+                        if (account) {
+                          onOnboardingComplete(account);
+                        }
+                        if (error) {
+                          setError(true);
+                        }
+                      });
+                  }}
+                  className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+                >
+                  Set Up Payments
+                </button>
+              </div>
+            )}
+            {stripeConnectInstance && (
+              <ConnectComponentsProvider connectInstance={stripeConnectInstance}>
+                <ConnectAccountOnboarding
+                  onExit={() => setOnboardingExited(true)}
+                  onComplete={(accountId) => onOnboardingComplete(accountId)}
+                />
+              </ConnectComponentsProvider>
+            )}
+            {error && (
+              <p className="text-red-500 mt-2">Something went wrong!</p>
+            )}
+            {(connectedAccountId || accountCreatePending || onboardingExited) && (
+              <div className="mt-4 p-4 bg-gray-50 rounded">
+                {connectedAccountId && (
+                  <p>
+                    Your connected account ID is:{" "}
+                    <code className="font-bold">{connectedAccountId}</code>
+                  </p>
+                )}
+                {accountCreatePending && <p>Creating a connected account...</p>}
+                {onboardingExited && (
+                  <p>The Account Onboarding component has exited</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
+
 };
 
 export default AccountPage;

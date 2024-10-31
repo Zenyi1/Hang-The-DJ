@@ -25,4 +25,37 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 });
 
+router.put('/', authenticateToken, async (req, res) => {
+    try {
+        const { name, bio } = req.body;
+        // Log the data being received
+        console.log('Update request:', { userId: req.user.userId, name, bio });
+
+        const updatedUser = await DjProfile.findByIdAndUpdate(
+            req.user.userId,
+            { $set: { name, bio } }, // Use $set to ensure fields are updated
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedUser) {
+            console.log('User not found:', req.user.userId);
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Log the updated user
+        console.log('Updated user:', updatedUser);
+
+        res.json({
+            name: updatedUser.name,
+            bio: updatedUser.bio,
+            email: updatedUser.email,
+            id: updatedUser._id
+        });
+    } catch (error) {
+        console.error('Error updating user data:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
 module.exports = router;
