@@ -1,11 +1,18 @@
-const DjProfile = require('../models/DjProfileForm'); // Add this at the top
-
+const DjProfile = require('../models/DjProfileForm');
 
 const createCheckoutSession = async (req, res) => {
   console.log('Endpoint hit!', new Date().toISOString());
   console.log('Request body:', req.body);
-  const { djId } = req.body;
-  console.log('1. Received DJ ID:', djId); // Log the incoming DJ ID
+  const { djId, amount } = req.body; // Add amount to destructuring
+  console.log('1. Received DJ ID:', djId);
+  console.log('1a. Received amount:', amount); // Log the received amount
+
+  // Validate amount
+  const validatedAmount = parseInt(amount);
+  if (isNaN(validatedAmount) || validatedAmount <= 0) {
+    console.error('Invalid amount received:', amount);
+    return res.status(400).json({ message: 'Invalid amount' });
+  }
 
   // Add this check
   if (!process.env.CLIENT_URL) {
@@ -14,31 +21,30 @@ const createCheckoutSession = async (req, res) => {
   }
 
   const stripe = require('stripe')(process.env.STRIPE_SECRET);
-  console.log('2. Stripe Secret Key:', process.env.STRIPE_SECRET); // Log the Stripe key (careful with security!)
-
-
-
+  console.log('2. Stripe Secret Key:', process.env.STRIPE_SECRET);
 
   try {
     const djProfile = await DjProfile.findById(djId);
-    console.log('3. Found DJ Profile:', djProfile); // Log the entire DJ profile
-
+    console.log('3. Found DJ Profile:', djProfile);
 
     if (!djProfile || !djProfile.stripeAccountId) {
       console.log('4. DJ Profile validation failed:', { 
-                profileExists: !!djProfile, 
-                hasStripeAccount: !!djProfile?.stripeAccountId 
+        profileExists: !!djProfile, 
+        hasStripeAccount: !!djProfile?.stripeAccountId 
       });
       return res.status(404).json({ message: 'DJ not found or Stripe account not linked' });
     }
 
-
     console.log('5. DJ Stripe Account ID:', djProfile.stripeAccountId);
 
-     // Log the checkout session parameters
-     console.log('6. Creating checkout session with params:', {
+    // Calculate application fee (10%)
+    const applicationFeeAmount = Math.round(validatedAmount * 0.1);
+
+    // Log the checkout session parameters
+    console.log('6. Creating checkout session with params:', {
       destination: djProfile.stripeAccountId,
-      amount: 500,
+      amount: validatedAmount,
+      applicationFee: applicationFeeAmount,
       currency: 'gbp'
     });
 
@@ -46,8 +52,6 @@ const createCheckoutSession = async (req, res) => {
       success: `${process.env.CLIENT_URL}/success`,
       cancel: `${process.env.CLIENT_URL}/cancel`
     });
-
-
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -58,7 +62,7 @@ const createCheckoutSession = async (req, res) => {
             product_data: {
               name: `Tip for ${djProfile.name}`,
             },
-            unit_amount: 500,
+            unit_amount: validatedAmount, // Use the validated amount from frontend
           },
           quantity: 1,
         },
@@ -67,7 +71,7 @@ const createCheckoutSession = async (req, res) => {
       success_url: `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.CLIENT_URL}/cancel`,
       payment_intent_data: {
-        application_fee_amount: 50,
+        application_fee_amount: applicationFeeAmount, // Dynamic fee based on amount
         transfer_data: {
           destination: djProfile.stripeAccountId,
         },
@@ -86,4 +90,5 @@ const createCheckoutSession = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
 module.exports = { createCheckoutSession };
