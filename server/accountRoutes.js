@@ -16,7 +16,8 @@ router.get('/', authenticateToken, async (req, res) => {
         res.json({
             email: user.email,
             id: user._id,
-            bio: user.bio
+            bio: user.bio,
+            name: user.name
             // Add any other relevant account details here
         });
     } catch (error) {

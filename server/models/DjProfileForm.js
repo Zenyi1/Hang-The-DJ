@@ -38,7 +38,7 @@ const DjProfileSchema = new mongoose.Schema({
 
 
 // Ensure the unique index is created on the email field
-DjProfileSchema.index({ email: 1 }, { unique: true });
+//DjProfileSchema.index({ email: 1 }, { unique: true });
 
 const DjProfile = mongoose.model('DjProfile', DjProfileSchema);
 

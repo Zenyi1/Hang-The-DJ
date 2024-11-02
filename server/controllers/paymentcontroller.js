@@ -9,11 +9,20 @@ const createCheckoutSession = async (req, res) => {
 
   // Validate amount
   const validatedAmount = parseInt(amount);
-  if (isNaN(validatedAmount) || validatedAmount <= 0) {
+  if (isNaN(validatedAmount) || validatedAmount < 0) {
     console.error('Invalid amount received:', amount);
     return res.status(400).json({ message: 'Invalid amount' });
   }
 
+
+  //If Dj allows pay what you think its worth, 0 is allowed and move them to the success page
+  /*
+  if (validatedAmount == 0 && isItFree == True) {
+
+  }
+  */
+
+ 
   // Add this check
   if (!process.env.CLIENT_URL) {
     console.error('CLIENT_URL is not defined in environment variables');
