@@ -18,7 +18,7 @@ const Login = () => {
       const response = await axios.post('http://localhost:5000/auth/login', { email });
       if (response.data.message) {
         setMessage('Verification code sent! Please check your email.');
-        navigate('/verify');
+        navigate('/verify', {state: {email}}); //pass email as a state so the user doesnt have to retype it
 
       }
     } catch (error) {

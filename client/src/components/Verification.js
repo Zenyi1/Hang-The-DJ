@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 
 const VerifyLogin = () => {
-  const [email, setEmail] = useState('');
+  const location = useLocation();
+  const [email] = useState(location.state?.email || '');
   const [verificationCode, setCode] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
@@ -32,14 +33,6 @@ const VerifyLogin = () => {
       <div className='bg-white shadow-md rounded-lg p-8 max-w-md w-full'>
         <h2 className='text-2xl font-bold text-center mb-6 text-gray-800'>Enter Verification Code</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
           <input
             type="text"
             placeholder="Enter your verification code"
