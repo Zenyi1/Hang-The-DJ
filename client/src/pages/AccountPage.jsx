@@ -176,7 +176,7 @@ const handleEditSubmit = async (e) => {
 
         
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          Welcome, {userData.email}!
+          Welcome, {userData.name}!
         </h2>
 
         <div className="mb-6">
