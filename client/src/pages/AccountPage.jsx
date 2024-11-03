@@ -53,6 +53,25 @@ const AccountPage = () => {
     fetchUserData();
   }, [navigate]);
 
+  useEffect(() => {
+    const checkStripeStatus = async () => {
+      if (userData?.id) {
+        try {
+          const response = await fetch(`http://localhost:5000/api/check-account-status/${userData.id}`);
+          const data = await response.json();
+          if (data.accountId) {
+            setConnectedAccountId(data.accountId);
+          }
+        } catch (error) {
+          console.error('Error checking Stripe status:', error);
+        }
+      }
+    };
+  
+    checkStripeStatus();
+  }, [userData]);
+  
+
 const handleEditSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
@@ -274,32 +293,43 @@ const handleEditSubmit = async (e) => {
               </p>
             )}
             {!accountCreatePending && !connectedAccountId && (
-              <div>
-                <button
-                  onClick={async () => {
-                    setAccountCreatePending(true);
-                    setError(false);
-                    fetch("http://localhost:5000/accountsetup", {
-                      method: "POST",
-                    })
-                      .then((response) => response.json())
-                      .then((json) => {
-                        setAccountCreatePending(false);
-                        const { account, error } = json;
-                        if (account) {
-                          onOnboardingComplete(account);
-                        }
-                        if (error) {
-                          setError(true);
-                        }
-                      });
-                  }}
-                  className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-                >
-                  Set Up Payments
-                </button>
-              </div>
-            )}
+  <div>
+    <button
+     onClick={async () => {
+      setAccountCreatePending(true);
+      setError(false);
+      try {
+        const response = await fetch("http://localhost:5000/api/create-stripe-account", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: userData.id
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.accountId) {
+          setAccountCreatePending(false);
+          onOnboardingComplete(data.accountId);
+        } else {
+          setError(true);
+          setAccountCreatePending(false);
+        }
+      } catch (error) {
+        console.error('Error setting up Stripe:', error);
+        setError(true);
+        setAccountCreatePending(false);
+      }
+    }}
+      className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+    >
+      Set Up Payments
+    </button>
+  </div>
+)}
             {stripeConnectInstance && (
               <ConnectComponentsProvider connectInstance={stripeConnectInstance}>
                 <ConnectAccountOnboarding
