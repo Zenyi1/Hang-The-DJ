@@ -53,6 +53,31 @@ const AccountPage = () => {
     fetchUserData();
   }, [navigate]);
 
+  useEffect(() => {
+    const checkStripeStatus = async () => {
+      if (userData?.id) {
+        try {
+          const response = await fetch(`http://localhost:5000/api/check-account-status/${userData.id}`);
+          const data = await response.json();
+          if (data.accountId) {
+            setConnectedAccountId(data.accountId);
+            // Update the userData with onboarding status
+            setUserData(prev => ({
+              ...prev,
+              isStripeOnboarded: data.isOnboarded
+            }));
+          }
+        } catch (error) {
+          console.error('Error checking Stripe status:', error);
+        }
+      }
+    };
+  
+    checkStripeStatus();
+  }, [userData?.id]);
+  
+  
+
 const handleEditSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
@@ -102,10 +127,27 @@ const handleEditSubmit = async (e) => {
     }
   };
 
-  const onOnboardingComplete = (accountId) => {
+  const onOnboardingComplete = async (accountId) => {
     setConnectedAccountId(accountId);
-    handleOnboardingSuccess(accountId);
+    try {
+      const response = await axios.post('http://localhost:5000/api/update-stripe-account', {
+        userId: userData.id,
+        stripeAccountId: accountId,
+        isOnboarded: true  // Add this line
+      });
+      if (response.data.message) {
+        console.log(response.data.message);
+        // Update local state to reflect onboarding completion
+        setUserData(prev => ({
+          ...prev,
+          isStripeOnboarded: true
+        }));
+      }
+    } catch (error) {
+      console.error('Error saving Stripe account ID:', error);
+    }
   };
+  
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -260,77 +302,85 @@ const handleEditSubmit = async (e) => {
         </div>
       </div>
 
-      <div className="max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg p-8">
+   {/* Payment Setup Section - Use only this version */}
+   <div className="max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg p-8">
         <h3 className="text-xl font-bold mb-4">Payment Setup</h3>
         <div className="container">
           <div className="content">
-            {!connectedAccountId && <h2>Get ready for take off</h2>}
-            {connectedAccountId && !stripeConnectInstance && (
-              <h2>Add information to start accepting money</h2>
-            )}
-            {!connectedAccountId && (
-              <p>
-                Join our team of DJs to start accepting payments for your services.
-              </p>
-            )}
-            {!accountCreatePending && !connectedAccountId && (
+            {connectedAccountId ? (
               <div>
-                <button
-                  onClick={async () => {
-                    setAccountCreatePending(true);
-                    setError(false);
-                    fetch("http://localhost:5000/accountsetup", {
-                      method: "POST",
-                    })
-                      .then((response) => response.json())
-                      .then((json) => {
-                        setAccountCreatePending(false);
-                        const { account, error } = json;
-                        if (account) {
-                          onOnboardingComplete(account);
-                        }
-                        if (error) {
-                          setError(true);
-                        }
-                      });
-                  }}
-                  className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-                >
-                  Set Up Payments
-                </button>
-              </div>
-            )}
-            {stripeConnectInstance && (
-              <ConnectComponentsProvider connectInstance={stripeConnectInstance}>
-                <ConnectAccountOnboarding
-                  onExit={() => setOnboardingExited(true)}
-                  onComplete={(accountId) => onOnboardingComplete(accountId)}
-                />
-              </ConnectComponentsProvider>
-            )}
-            {error && (
-              <p className="text-red-500 mt-2">Something went wrong!</p>
-            )}
-            {(connectedAccountId || accountCreatePending || onboardingExited) && (
-              <div className="mt-4 p-4 bg-gray-50 rounded">
-                {connectedAccountId && (
+                <div className="mt-4 p-4 bg-gray-50 rounded">
                   <p>
-                    Your connected account ID is:{" "}
+                    Your connected account ID:{" "}
                     <code className="font-bold">{connectedAccountId}</code>
                   </p>
-                )}
-                {accountCreatePending && <p>Creating a connected account...</p>}
-                {onboardingExited && (
-                  <p>The Account Onboarding component has exited</p>
+                  {userData.isStripeOnboarded ? (
+                    <p className="text-green-600 mt-2">✓ Your account is fully set up</p>
+                  ) : (
+                    <div className="mt-2">
+                      <p className="text-yellow-600 mb-2">⚠️ Please complete your account setup</p>
+                      {stripeConnectInstance && (
+                        <ConnectComponentsProvider connectInstance={stripeConnectInstance}>
+                          <ConnectAccountOnboarding
+                            onExit={() => setOnboardingExited(true)}
+                            onComplete={(accountId) => onOnboardingComplete(accountId)}
+                          />
+                        </ConnectComponentsProvider>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div>
+                <h2>Get ready for take off</h2>
+                <p>Join our team of DJs to start accepting payments for your services.</p>
+                {!accountCreatePending && (
+                  <button
+                    onClick={async () => {
+                      setAccountCreatePending(true);
+                      setError(false);
+                      try {
+                        const response = await fetch("http://localhost:5000/api/create-stripe-account", {
+                          method: "POST",
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            userId: userData.id
+                          })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.accountId) {
+                          setAccountCreatePending(false);
+                          setConnectedAccountId(data.accountId);
+                        } else {
+                          setError(true);
+                          setAccountCreatePending(false);
+                        }
+                      } catch (error) {
+                        console.error('Error setting up Stripe:', error);
+                        setError(true);
+                        setAccountCreatePending(false);
+                      }
+                    }}
+                    className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 mt-4"
+                  >
+                    Set Up Payments
+                  </button>
                 )}
               </div>
+            )}
+            {accountCreatePending && <p>Creating a connected account...</p>}
+            {error && (
+              <p className="text-red-500 mt-2">Something went wrong!</p>
             )}
           </div>
         </div>
       </div>
     </div>
-  );
-
+  )
 };
-
 export default AccountPage;
