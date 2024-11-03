@@ -14,10 +14,10 @@ const Success = () => {
           Your payment was approved, you will be redirected to the artist's page in 10 seconds
         </p>
         <button
-          onClick={() => navigate('/choose')}
+          onClick={() => navigate('/')}
           className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
         >
-          Try Again
+          HangTheDJ
         </button>
       </div>
     </div>
