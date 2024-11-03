@@ -355,7 +355,7 @@ const handleEditSubmit = async (e) => {
                         
                         if (data.accountId) {
                           setAccountCreatePending(false);
-                          onOnboardingComplete(data.accountId);
+                          setConnectedAccountId(data.accountId);
                         } else {
                           setError(true);
                           setAccountCreatePending(false);

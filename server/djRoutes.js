@@ -32,6 +32,12 @@ router.post('/create-stripe-account', async (req, res) => {
 
     // If user already has a Stripe account, return it
     if (user.stripeAccountId) {
+      //Also get current onboarding status
+      const account = await stripe.accounts.retrieve(user.stripeAccountId);
+      user.isStripeOnboarded = account.details_submitted;
+      await user.save();
+
+
       return res.json({ 
         accountId: user.stripeAccountId,
         existing: true
@@ -50,13 +56,14 @@ router.post('/create-stripe-account', async (req, res) => {
       business_type: 'individual',
     });
 
-    // Save the account ID
+    // Save the account ID and set onboarding to false
     user.stripeAccountId = account.id;
     user.isStripeOnboarded = false;
     await user.save();
 
     res.json({ 
       accountId: account.id,
+      isOnbboarded: false,
       existing: false
     });
   } catch (error) {
