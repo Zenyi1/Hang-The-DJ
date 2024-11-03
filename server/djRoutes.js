@@ -65,6 +65,30 @@ router.post('/create-stripe-account', async (req, res) => {
   }
 });
 
+router.post('/update-stripe-account', async (req, res) => {
+  try {
+    const { userId, stripeAccountId, isOnboarded } = req.body;
+    const user = await DjProfile.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.stripeAccountId = stripeAccountId;
+    if (isOnboarded !== undefined) {
+      user.isStripeOnboarded = isOnboarded;
+    }
+    
+    await user.save();
+
+    res.json({ message: 'Stripe account updated successfully' });
+  } catch (error) {
+    console.error('Error updating Stripe account:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 // Add this route in djRoutes.js
 router.get('/check-account-status/:userId', async (req, res) => {
   try {
