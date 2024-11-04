@@ -1,28 +1,36 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-
+import { useNavigate } from 'react-router-dom';
+import sample from '../resources/DJ.mp4';
 
 const HomePage = () => {
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   return (
-    <div
-      className="flex flex-col justify-center items-center min-h-screen bg-cover bg-center bg-[url('../../public/mobile-background.jpg')] md:bg-[url('../../public/desktop-background.jpg')]"
-    >
-      <h1 className="text-7xl md:text-8xl font-extrabold text-white drop-shadow-lg mb-10 animate-bounce">
+    <div className="relative min-h-screen flex flex-col justify-center items-center">
+      <video
+        className="absolute inset-0 min-w-full min-h-full object-cover z-[-1]"
+        autoPlay
+        loop
+        muted
+        playsInline
+      >
+        <source src={sample} type="video/mp4" />
+      </video>
+      <div className="absolute inset-0 bg-black opacity-50 z-[-1]"></div>
+      <h1 className="text-6xl md:text-8xl font-extrabold text-white drop-shadow-lg mb-10 animate-bounce">
         Hang The DJ
       </h1>
       <div className="flex flex-col gap-4">
         <button
-          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105"
-          onClick={() => navigate('/register')} // Navigate to DJ Profile form
+          className="bg-black hover:bg-yellow-400 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105"
+          onClick={() => navigate('/register')}
         >
           I'm a DJ
         </button>
-        <form className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105">
-          <button type="submit"
-          onClick={() => navigate('/choose')}
-          >Tip or Request</button>
+        <form className="bg-black hover:bg-yellow-400 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-300 transform hover:scale-105">
+          <button type="submit" onClick={() => navigate('/choose')}>
+            Tip or Request
+          </button>
         </form>
       </div>
     </div>

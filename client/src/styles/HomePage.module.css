@@ -1,6 +1,5 @@
 /* src/styles/HomePage.module.css */
 html {
-    background: url(../resources/audience.jpg) no-repeat center center fixed;
     background-size: cover; /* Prevents tiling */
     color: #FF69B4; /* Neon pink */
 }

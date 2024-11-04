@@ -62,7 +62,7 @@ const DjProfileForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[url('../../public/mobile-background.jpg')] md:bg-[url('../../public/desktop-background.jpg')]">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[url('../../public/mobile-background.jpg')] md:bg-[url('../../public/audience.jpg')]">
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Create Your DJ Profile</h2>
         <div className="mb-4">
