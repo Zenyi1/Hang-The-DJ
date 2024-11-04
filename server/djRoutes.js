@@ -14,9 +14,14 @@ router.post('/djs', async (req, res) => {
     res.status(201).json({ success: true, message: 'DJ profile created!' });
   } catch (error) {
     if (error.code === 11000 && error.keyValue.email) {
-      return res.status(400).json({ error: 'Email already exists. Please use a different email.' });
+      console.log("email");
+      return res.status(400).json({ message: 'This email is already registered' });
     }
-    res.status(500).json({ success: false, message: 'Server error' });
+    if (error.code === 11000 && error.keyValue.name) {
+      console.log("username");
+      return res.status(400).json({ message: 'Username already taken' });
+    }
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

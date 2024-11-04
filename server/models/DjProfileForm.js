@@ -4,6 +4,7 @@ const DjProfileSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    unique:true
   },
   bio: {
     type: String,

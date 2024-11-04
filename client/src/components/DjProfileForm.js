@@ -47,11 +47,10 @@ const DjProfileForm = () => {
         setEmail('');
       }
     } catch (error) {
-
-      if (error.response && error.response.data && error.response.data.error) {
-        setMessage('Email is already in use');
+      if (error.response && error.response.data && error.response.data.message) {
+        setMessage(error.response.data.message);
         setMessageType('error');
-      } else{
+      } else {
         setMessage('Failed to create DJ profile. Please try again.');
         setMessageType('error');
       }
@@ -68,7 +67,7 @@ const DjProfileForm = () => {
         <h2 className="text-2xl font-bold mb-6 text-center">Create Your DJ Profile</h2>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-            DJ Name
+            DJ Name - username
           </label>
           <input
             type="text"
