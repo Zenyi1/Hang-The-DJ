@@ -1,12 +1,121 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import styled from 'styled-components';
+
+const Container = styled.div`
+  min-height: 100vh;
+  background-color: #121212;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+`;
+
+const PaymentCard = styled.div`
+  background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+  border-radius: 15px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+`;
+
+const Title = styled.h2`
+  color: #1DB954;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
+`;
+
+const AmountGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+`;
+
+const AmountButton = styled.button`
+  background: ${props => props.selected ? '#1DB954' : '#333'};
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${props => props.selected ? '#1ed760' : '#444'};
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+`;
+
+const CustomInput = styled.input`
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: #333;
+  border: 2px solid ${props => props.error ? '#ff4444' : '#1DB954'};
+  border-radius: 10px;
+  color: white;
+  font-size: 1.1rem;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(29, 185, 84, 0.3);
+  }
+
+  &::placeholder {
+    color: #888;
+  }
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  padding: 1rem;
+  background-color: #1DB954;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #1ed760;
+    box-shadow: 0 0 20px rgba(29, 185, 84, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const ErrorMessage = styled.div`
+  color: #ff4444;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+`;
+
+const LoadingSpinner = styled.div`
+  color: #1DB954;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 2rem;
+`;
 
 const PaymentPage = () => {
   const { djId } = useParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [amount, setAmount] = useState(5); // Default amount
+  const [amount, setAmount] = useState(5);
   const [customAmount, setCustomAmount] = useState('');
   const [isCustomAmount, setIsCustomAmount] = useState(false);
 
@@ -14,82 +123,70 @@ const PaymentPage = () => {
 
   const createCheckoutSession = async () => {
     setLoading(true);
-    console.log('Attempting to create checkout session for DJ:', djId);
     try {
       const finalAmount = isCustomAmount ? parseFloat(customAmount) : amount;
       const response = await axios.post('http://localhost:5000/api/create-checkout-session', {
         djId,
-        amount: finalAmount * 100 // Convert to cents for Stripe
+        amount: finalAmount * 100
       });
-      console.log('Response received:', response.data);
       window.location.href = response.data.url;
     } catch (error) {
-      console.error('Error creating checkout session:', error.response || error);
       setError('Failed to create checkout session. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div className="text-center p-4">Loading...</div>;
+  if (loading) return <LoadingSpinner>Processing your request...</LoadingSpinner>;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="p-8 bg-white rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4 text-center">Choose Tip Amount</h2>
+    <Container>
+      <PaymentCard>
+        <Title>Choose Your Tip Amount</Title>
         
-        <div className="grid grid-cols-3 gap-2 mb-4">
+        <AmountGrid>
           {predefinedAmounts.map((preset) => (
-            <button
+            <AmountButton
               key={preset}
+              selected={amount === preset && !isCustomAmount}
               onClick={() => {
                 setAmount(preset);
                 setIsCustomAmount(false);
               }}
-              className={`p-2 rounded ${
-                amount === preset && !isCustomAmount 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-200 hover:bg-gray-300'
-              }`}
             >
               ${preset}
-            </button>
+            </AmountButton>
           ))}
-          <button
+          <AmountButton
+            selected={isCustomAmount}
             onClick={() => setIsCustomAmount(true)}
-            className={`p-2 rounded ${
-              isCustomAmount 
-                ? 'bg-blue-500 text-white' 
-                : 'bg-gray-200 hover:bg-gray-300'
-            }`}
           >
             Custom
-          </button>
-        </div>
+          </AmountButton>
+        </AmountGrid>
 
         {isCustomAmount && (
-          <input
+          <CustomInput
             type="number"
             min="1"
             step="0.50"
             value={customAmount}
             onChange={(e) => setCustomAmount(e.target.value)}
-            className="w-full p-2 mb-4 border rounded"
             placeholder="Enter amount"
+            error={error}
           />
         )}
 
-        {error && <div className="text-red-500 mb-4 text-center">{error}</div>}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
 
-        <button
+        <SubmitButton
           onClick={createCheckoutSession}
           disabled={loading || (isCustomAmount && !customAmount)}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
         >
           {loading ? 'Processing...' : `Tip $${isCustomAmount ? customAmount || '0' : amount}`}
-        </button>
-      </div>
-    </div>
+        </SubmitButton>
+      </PaymentCard>
+    </Container>
   );
 };
 
