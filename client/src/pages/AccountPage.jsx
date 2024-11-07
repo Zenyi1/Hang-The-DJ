@@ -24,6 +24,30 @@ const AccountPage = () => {
   const [connectedAccountId, setConnectedAccountId] = useState();
   const [profilePicture, setProfilePicture] = useState(null);
   const stripeConnectInstance = useStripeConnect(connectedAccountId);
+  const [paymentHistory, setPaymentHistory] = useState([]);
+
+  useEffect(() => {
+    const fetchPaymentDetails = async () => {
+      if (connectedAccountId && userData?.isStripeOnboarded) {
+        try {
+          // Only fetch payment history, remove dashboard link fetch
+          const historyResponse = await axios.get(`http://localhost:5000/api/payment-history/${connectedAccountId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            }
+          });
+          setPaymentHistory(historyResponse.data.payments);
+        } catch (error) {
+          console.error('Error fetching payment details:', error);
+          setMessage('Failed to load payment details');
+        }
+      }
+    };
+  
+    fetchPaymentDetails();
+  }, [connectedAccountId, userData?.isStripeOnboarded]);
+  
+  
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -380,6 +404,54 @@ const handleEditSubmit = async (e) => {
           </div>
         </div>
       </div>
+      {/* Payment History Section */}
+{userData?.isStripeOnboarded && connectedAccountId && (
+  <div className="max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg p-8">
+    <div className="flex justify-between items-center mb-4">
+      <h3 className="text-xl font-bold">Payment History</h3>
+    </div>
+    
+    {paymentHistory.length > 0 ? (
+      <div className="space-y-4">
+        {paymentHistory.map((payment) => (
+          <div 
+            key={payment.id} 
+            className="border rounded-lg p-4 hover:bg-gray-50"
+          >
+            <div className="flex justify-between">
+              <span className="font-medium">
+                ${(payment.amount / 100).toFixed(2)}
+              </span>
+              <span className={`px-2 py-1 rounded text-sm ${
+                payment.status === 'paid' 
+                  ? 'bg-green-100 text-green-800' 
+                  : 'bg-yellow-100 text-yellow-800'
+              }`}>
+                {payment.status}
+              </span>
+            </div>
+            <div className="text-sm text-gray-500 mt-1">
+              {new Date(payment.created * 1000).toLocaleDateString()}
+            </div>
+            <div className="text-sm text-gray-600 mt-1">
+              Net Amount: ${(payment.net / 100).toFixed(2)}
+            </div>
+            {payment.description && (
+              <div className="text-sm text-gray-500 mt-1">
+                {payment.description}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p className="text-gray-500 text-center py-4">
+        No payment history available yet
+      </p>
+    )}
+  </div>
+)}
+
     </div>
   )
 };
