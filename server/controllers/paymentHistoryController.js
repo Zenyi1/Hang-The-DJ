@@ -24,17 +24,22 @@ exports.getPaymentHistory = async (req, res) => {
       expand: ['data.destination_payment']
     });
 
-    // Format the payment data
-    const payments = transfers.data.map(transfer => ({
-      id: transfer.id,
-      amount: transfer.amount,
-      status: transfer.status,
-      created: transfer.created,
-      currency: transfer.currency,
-      description: transfer.description,
-      fee: transfer.amount_reversed || 0,
-      net: transfer.amount - (transfer.amount_reversed || 0)
-    }));
+    // Calculate actual amounts after all fees
+    const payments = transfers.data.map(transfer => {
+        const originalAmount = transfer.amount + transfer.amount_reversed || 0;
+        const stripeFee = Math.round(originalAmount * 0.029 + 30); // 2.9% + 30¢
+        const platformFee = Math.round(originalAmount * 0.05); // Your 5% fee
+        const djAmount = transfer.amount - stripeFee - platformFee;
+  
+        return {
+          id: transfer.id,
+          amount: djAmount, // This is now the actual amount after all fees
+          originalAmount: originalAmount,
+          status: transfer.status,
+          created: transfer.created,
+          description: transfer.description || `Payment of $${(originalAmount / 100).toFixed(2)}`
+        };
+      });
 
     res.json({ payments });
   } catch (error) {

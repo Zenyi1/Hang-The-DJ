@@ -46,8 +46,8 @@ const createCheckoutSession = async (req, res) => {
 
     console.log('5. DJ Stripe Account ID:', djProfile.stripeAccountId);
 
-    // Calculate application fee (10%)
-    const applicationFeeAmount = Math.round(validatedAmount * 0.1);
+    // Calculate application fee (5%)
+    const applicationFeeAmount = Math.round(validatedAmount * 0.05);
 
     // Log the checkout session parameters
     console.log('6. Creating checkout session with params:', {
