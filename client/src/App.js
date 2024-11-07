@@ -10,6 +10,8 @@ import PaymentPage from './pages/PaymentPage';
 import ChoosePage from './pages/whichDj';
 import Success from './pages/Success';
 import Cancel from './pages/Cancel';
+import About from './pages/About';
+import Contact from './pages/Contact';
 
 
 
@@ -26,6 +28,8 @@ const App = () => {
         <Route path="/choose" element={<ChoosePage/>}/>
         <Route path="/success" element={<Success/>}/>
         <Route path="/cancel" element={<Cancel/>}/>
+        <Route path="/about" element={<About/>}/>
+        <Route path="/contact" element={<Contact/>}/>
       </Routes>
     </Router>
   );

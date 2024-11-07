@@ -21,7 +21,7 @@ const About = () => {
         <p className="mb-4">
           Are you a fan?
           HangTheDJ is the best way to communicate directly with your favorite performer, do you want to request a song during a live performance? Ask them to check out your soundcloud? Tell them their current set is s**t, or simply support them. Hang The Dj is the best way to do it, simply scan the QR code or visit their link.
-          You know how fans interact with streamers and send them money for tts? This is the same but for your favorite artists. Why is it better you ask? Don't worry about it just take our word for it.
+          You know how fans interact with streamers and send them money for tts? This is the same but better and for your favorite artists. Why is it better you ask? Don't worry about it just take our word for it.
         </p>
         {/* Add more content as needed */}
       </div>
