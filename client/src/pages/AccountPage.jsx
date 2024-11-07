@@ -412,43 +412,41 @@ const handleEditSubmit = async (e) => {
     </div>
     
     {paymentHistory.length > 0 ? (
-      <div className="space-y-4">
-        {paymentHistory.map((payment) => (
-          <div 
-            key={payment.id} 
-            className="border rounded-lg p-4 hover:bg-gray-50"
-          >
-            <div className="flex justify-between">
-              <span className="font-medium">
-                ${(payment.amount / 100).toFixed(2)}
-              </span>
-              <span className={`px-2 py-1 rounded text-sm ${
-                payment.status === 'paid' 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-yellow-100 text-yellow-800'
-              }`}>
-                {payment.status}
-              </span>
-            </div>
-            <div className="text-sm text-gray-500 mt-1">
-              {new Date(payment.created * 1000).toLocaleDateString()}
-            </div>
-            <div className="text-sm text-gray-600 mt-1">
-              Net Amount: ${(payment.net / 100).toFixed(2)}
-            </div>
-            {payment.description && (
-              <div className="text-sm text-gray-500 mt-1">
-                {payment.description}
-              </div>
-            )}
+  <div className="space-y-4">
+    {paymentHistory.map((payment) => (
+      <div 
+        key={payment.id} 
+        className="border rounded-lg p-4 hover:bg-gray-50"
+      >
+        <div className="flex justify-between">
+          <span className="font-medium">
+            ${(payment.amount / 100).toFixed(2)}
+          </span>
+          <span className={`px-2 py-1 rounded text-sm ${
+            payment.status === 'paid' 
+              ? 'bg-green-100 text-green-800' 
+              : 'bg-yellow-100 text-yellow-800'
+          }`}>
+            {payment.status}
+          </span>
+        </div>
+        <div className="text-sm text-gray-500 mt-1">
+          {new Date(payment.created * 1000).toLocaleDateString()}
+        </div>
+        {payment.description && (
+          <div className="text-sm text-gray-500 mt-1">
+            {payment.description}
           </div>
-        ))}
+        )}
       </div>
-    ) : (
-      <p className="text-gray-500 text-center py-4">
-        No payment history available yet
-      </p>
-    )}
+    ))}
+  </div>
+) : (
+  <p className="text-gray-500 text-center py-4">
+    No payment history available yet
+  </p>
+)}
+
   </div>
 )}
 
