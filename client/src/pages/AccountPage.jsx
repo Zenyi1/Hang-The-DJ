@@ -449,6 +449,35 @@ const handleEditSubmit = async (e) => {
 
   </div>
 )}
+{/* Payment Link Section */}
+{userData?.isStripeOnboarded && connectedAccountId && (
+  <div className="max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg p-8">
+    <h3 className="text-xl font-bold mb-4">Your Payment Link</h3>
+    <div className="bg-gray-50 p-4 rounded-lg">
+      <p className="text-sm text-gray-600 mb-2">Share this link to receive payments:</p>
+      <div className="flex items-center space-x-2">
+        <input 
+          type="text"
+          readOnly
+          value={`${window.location.origin}/pay/${userData.id}`}
+          className="flex-1 p-2 border rounded bg-white"
+        />
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(`${window.location.origin}/pay/${userData.id}`);
+            setMessage('Link copied to clipboard!');
+            setTimeout(() => setMessage(''), 3000);
+          }}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Copy
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
 
     </div>
   )

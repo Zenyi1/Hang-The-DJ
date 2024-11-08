@@ -14,8 +14,8 @@ const Title = styled.h1`
   font-size: 3rem;
   text-align: center;
   margin-bottom: 3rem;
-  color: #1DB954;
-  text-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
+  color: #ffee58;
+  text-shadow: 0 0 10px rgba(255,238,88, 0.8);
 `;
 
 const DjList = styled.div`
@@ -34,7 +34,7 @@ const DjCard = styled.div`
   
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(29, 185, 84, 0.3);
+    box-shadow: 0 5px 15px rgba(255,238,88, 0.8);
   }
 `;
 
@@ -45,14 +45,15 @@ const DjName = styled.h2`
 `;
 
 const TipButton = styled.button`
-  background-color: #1DB954;
-  color: white;
+  background-color: #ffee58;
+  color: black;
   border: none;
   padding: 0.8rem 1.5rem;
   border-radius: 25px;
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
+  font-weight: bold;
   
   &:hover {
     background-color: #1ed760;
