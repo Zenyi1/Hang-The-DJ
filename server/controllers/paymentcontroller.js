@@ -14,6 +14,8 @@ const createCheckoutSession = async (req, res) => {
     return res.status(400).json({ message: 'Invalid amount' });
   }
 
+  const fanId = req.user ? req.user.id : 'Anonymous';
+
 
   //If Dj allows pay what you think its worth, 0 is allowed and move them to the success page
   /*
@@ -79,6 +81,11 @@ const createCheckoutSession = async (req, res) => {
       mode: 'payment',
       success_url: `${process.env.CLIENT_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.CLIENT_URL}/cancel`,
+      metadata: {
+        message: req.body.message,
+        fanId: fanId,
+        djId: req.body.djId,
+      },
       payment_intent_data: {
         application_fee_amount: applicationFeeAmount, // Dynamic fee based on amount
         transfer_data: {

@@ -9,12 +9,17 @@ const multer = require('multer');
 const path = require('path');
 const DjProfile = require('./models/DjProfileForm')
 const paymentRoutes = require('./routes/paymentRoutes');  // Payment-related routes
+const webhookController = require('./controllers/webhookController');
+const bodyParser = require('body-parser');
 
 
 const app = express();
+
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), webhookController.handleStripeWebhook);
 app.use(cors());
 app.use(express.static("dist"));
 app.use(express.json());
+
 
 // Configure Multer for file uploads
 const storage = multer.diskStorage({
@@ -53,6 +58,7 @@ const stripe = require("stripe")(
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api', paymentRoutes);  // Use payment routes
+
 
 
 // Upload endpoint

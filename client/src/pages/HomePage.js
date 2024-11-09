@@ -95,23 +95,8 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-            {/* Description Card */}
-            <div className="bg-black text-white p-6 flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-6">
-        <div className="flex-1 px-4">
-          <p className="text-lg text-justify">
-          <b>Are you a DJ? </b><br />
-          Make some extra cash, your supporter and/or fans will be able to tip and interact with you.
-          </p>
-        </div>
-        <div className="flex-1">
-          <img src="/audience.jpg" alt="Audience" className="w-full h-auto rounded-lg shadow-md" />
-        </div>
-      </div>
-       {/* Description Card */}
-       <div className="bg-black text-white p-6 flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-6">
-       <div className="flex-1">
-          <img src="/audience2.jpg" alt="Audience" className="w-full h-auto rounded-lg shadow-md" />
-        </div>
+      {/* Description Card */}
+      <div className="bg-black text-white p-6 flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-6">
         <div className="flex-1 px-4">
           <p className="text-lg text-justify">
           <b>Are you a fan? </b><br />
@@ -119,7 +104,24 @@ const HomePage = () => {
           You know how fans interact with streamers and send them money for tts? This is the same but better and for your favorite artists. Why is it better you ask? Don't worry about it just take our word for it.
           </p>
         </div>
+        <div className="flex-1">
+          <img src="/audience2.jpg" alt="Audience" className="w-full h-auto rounded-lg shadow-md" />
+        </div>
       </div>
+            {/* Description Card */}
+            <div className="bg-black text-white p-6 flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-6">
+            <div className="flex-1">
+          <img src="/audience.jpg" alt="Audience" className="w-full h-auto rounded-lg shadow-md" />
+        </div>
+        <div className="flex-1 px-4">
+          <p className="text-lg text-justify">
+          <b>Are you a DJ? </b><br />
+          Make some extra cash, your supporter and/or fans will be able to tip and interact with you.
+          </p>
+        </div>
+        
+      </div>
+       
 
       {/* Footer */}
       <footer className="bg-black bg-opacity-80 py-4 text-center text-white">

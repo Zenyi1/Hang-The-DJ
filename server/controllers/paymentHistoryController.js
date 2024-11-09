@@ -1,5 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const jwt = require('jsonwebtoken');
+const Message = require('../models/MessageForm');
+
 
 exports.getPaymentHistory = async (req, res) => {
   try {
@@ -72,3 +74,15 @@ exports.createLoginLink = async (req, res) => {
     res.status(500).json({ error: 'Failed to create login link' });
   }
 };
+
+exports.getMessages = async (req, res) => {
+  const { djId } = req.params;
+  try {
+    const messages = await Message.find({ toDJId: djId }).populate('fanId', 'email'); // Adjust fields from fan if needed
+    res.json(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+

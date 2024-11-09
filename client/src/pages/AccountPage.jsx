@@ -6,6 +6,8 @@ import {
   ConnectAccountOnboarding,
   ConnectComponentsProvider,
 } from "@stripe/react-connect-js";
+import Inbox from '../components/Inbox';
+
 
 const AccountPage = () => {
   const [userData, setUserData] = useState(null);
@@ -259,8 +261,12 @@ const handleEditSubmit = async (e) => {
               className="w-32 h-32 rounded-full object-cover mx-auto"
             />
           )}
+          {/* Add the Inbox Component here */}
+      {userData.isStripeOnboarded && (
+        <Inbox djId={userData.id} />
+      )}
         </div>
-
+          
         <div className="space-y-4">
           {isEditing ? (
             <form onSubmit={handleEditSubmit} className="space-y-4">

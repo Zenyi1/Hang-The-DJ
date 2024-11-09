@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const DjProfile = require('../models/DjProfileForm');
 const { createCheckoutSession } = require('../controllers/paymentcontroller');
-const { getPaymentHistory, createLoginLink } = require('../controllers/paymentHistoryController');
+const { getPaymentHistory, createLoginLink, getMessages } = require('../controllers/paymentHistoryController');
 const authMiddleware = require('../authMiddleware');
+
+
 
 console.log('Payment routes initialized');
 
@@ -15,6 +17,8 @@ router.post('/create-checkout-session', (req, res) => {
 // Protected routes with authentication
 router.get('/payment-history/:accountId', authMiddleware, getPaymentHistory);
 router.post('/create-login-link', authMiddleware, createLoginLink);
+router.get('/messages/:djId', authMiddleware, getMessages);
+
 
 router.get('/pay/:djId', async (req, res) => {
   const { djId } = req.params;

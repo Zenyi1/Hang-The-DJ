@@ -120,6 +120,9 @@ const PaymentPage = () => {
   const [customAmount, setCustomAmount] = useState('');
   const [isCustomAmount, setIsCustomAmount] = useState(false);
   const [message, setMessage] = useState('');
+  const [fanName, setFanName] = useState(''); // Initialize state for fan name
+
+  
 
 
   const predefinedAmounts = [2.5, 5, 10, 20, 50];
@@ -131,7 +134,8 @@ const PaymentPage = () => {
       const response = await axios.post('http://localhost:5000/api/create-checkout-session', {
         djId,
         amount: finalAmount * 100,
-        message
+        message,
+        fanId: fanName || 'Anonymous',
       });
       window.location.href = response.data.url;
     } catch (error) {
@@ -183,6 +187,24 @@ const PaymentPage = () => {
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
 
+        {/* Input for the fan's name */}
+        <CustomInput
+          type="text"
+          maxLength="20" // Limit to 20 characters
+          value={fanName}
+          onChange={(e) => setFanName(e.target.value)} // Handle name changes
+          placeholder="Your name (max 20 characters)"
+        />
+
+        {/* Message input field */}
+        <CustomInput
+          type="text"
+          maxLength="250"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)} // Update message state
+          placeholder="Optional message for the DJ"
+        />
+
         <SubmitButton
           onClick={createCheckoutSession}
           disabled={loading || (isCustomAmount && !customAmount)}
@@ -190,12 +212,6 @@ const PaymentPage = () => {
           {loading ? 'Processing...' : `Tip $${isCustomAmount ? customAmount || '0' : amount}`}
         </SubmitButton>
       </PaymentCard>
-      <CustomInput
-      type="text"
-      value={message}
-      onChange={(e) => setMessage(e.target.value)}
-      placeholder="Optional message for the DJ"
-    />
 
     </Container>
   );
