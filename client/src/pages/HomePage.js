@@ -9,7 +9,7 @@ const HomePage = () => {
   return (
     <div className="relative min-h-screen flex flex-col justify-between">
       {/* Navbar */}
-      <nav className="absolute top-0 left-0 right-0 p-4 md:p-6 flex justify-between items-center z-10 bg-opacity-70 bg-black pb-6">
+      <nav className="absolute top-0 left-0 right-0 p-4 md:p-6 flex justify-between items-center z-10 bg-black pb-6">
         <h1
           className="text-2xl md:text-3xl font-extrabold text-white drop-shadow-lg hover:text-yellow-400 cursor-pointer transition duration-300"
           onClick={() => navigate('/')}
@@ -72,8 +72,8 @@ const HomePage = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="relative flex flex-col md:flex-row items-center justify-center p-4 space-y-6 md:space-y-0  md:space-x-6 mt-20">
-        <div className="bg-white bg-opacity-90 rounded-lg shadow-lg p-4 flex-1 md:max-w-xl">
+      <div className="relative flex flex-col md:flex-row items-center justify-center p-4 space-y-6 md:space-y-0  md:space-x-12 mt-20">
+        <div className="bg-white bg-opacity-90 rounded-lg shadow-lg p-4 flex-1 md:max-w-2xl">
           <video className="w-full rounded" autoPlay loop muted playsInline>
             <source src={sample} type="video/mp4" />
           </video>

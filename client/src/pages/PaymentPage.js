@@ -58,6 +58,7 @@ const CustomInput = styled.input`
   width: 100%;
   padding: 1rem;
   margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
   background-color: #333;
   border: 2px solid ${props => props.error ? '#ff4444' : '#1DB954'};
   border-radius: 10px;
@@ -118,6 +119,8 @@ const PaymentPage = () => {
   const [amount, setAmount] = useState(5);
   const [customAmount, setCustomAmount] = useState('');
   const [isCustomAmount, setIsCustomAmount] = useState(false);
+  const [message, setMessage] = useState('');
+
 
   const predefinedAmounts = [2.5, 5, 10, 20, 50];
 
@@ -127,7 +130,8 @@ const PaymentPage = () => {
       const finalAmount = isCustomAmount ? parseFloat(customAmount) : amount;
       const response = await axios.post('http://localhost:5000/api/create-checkout-session', {
         djId,
-        amount: finalAmount * 100
+        amount: finalAmount * 100,
+        message
       });
       window.location.href = response.data.url;
     } catch (error) {
@@ -186,6 +190,13 @@ const PaymentPage = () => {
           {loading ? 'Processing...' : `Tip $${isCustomAmount ? customAmount || '0' : amount}`}
         </SubmitButton>
       </PaymentCard>
+      <CustomInput
+      type="text"
+      value={message}
+      onChange={(e) => setMessage(e.target.value)}
+      placeholder="Optional message for the DJ"
+    />
+
     </Container>
   );
 };
