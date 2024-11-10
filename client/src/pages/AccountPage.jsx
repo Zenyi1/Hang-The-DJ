@@ -6,8 +6,7 @@ import {
   ConnectAccountOnboarding,
   ConnectComponentsProvider,
 } from "@stripe/react-connect-js";
-import Inbox from '../components/Inbox';
-
+import { FaEnvelope } from 'react-icons/fa'; // Import an icon library (like react-icons)
 
 const AccountPage = () => {
   const [userData, setUserData] = useState(null);
@@ -228,6 +227,12 @@ const handleEditSubmit = async (e) => {
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-8">
+      <button
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          onClick={() => navigate(`/inbox/${userData.id}`)} // Ensure to route to new Inbox Page
+        >
+          <FaEnvelope size={24} />
+        </button>
       {message && !message.includes('login') && (
         <div 
           className={`mb-4 p-3 rounded ${
@@ -261,10 +266,7 @@ const handleEditSubmit = async (e) => {
               className="w-32 h-32 rounded-full object-cover mx-auto"
             />
           )}
-          {/* Add the Inbox Component here */}
-      {userData.isStripeOnboarded && (
-        <Inbox djId={userData.id} />
-      )}
+          
         </div>
           
         <div className="space-y-4">

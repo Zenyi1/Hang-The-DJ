@@ -12,7 +12,7 @@ import Success from './pages/Success';
 import Cancel from './pages/Cancel';
 import About from './pages/About';
 import Contact from './pages/Contact';
-
+import InboxPage from './pages/InboxPage';
 
 
 const App = () => {
@@ -30,6 +30,7 @@ const App = () => {
         <Route path="/cancel" element={<Cancel/>}/>
         <Route path="/about" element={<About/>}/>
         <Route path="/contact" element={<Contact/>}/>
+        <Route path="/inbox/:djId" element={<ProtectedRoute><InboxPage /></ProtectedRoute>} />
       </Routes>
     </Router>
   );
