@@ -3,7 +3,7 @@ const DjProfile = require('../models/DjProfileForm');
 const createCheckoutSession = async (req, res) => {
   console.log('Endpoint hit!', new Date().toISOString());
   console.log('Request body:', req.body);
-  const { djId, amount } = req.body; // Add amount to destructuring
+  const { djId, amount, fanId } = req.body; // Add amount to destructuring
   console.log('1. Received DJ ID:', djId);
   console.log('1a. Received amount:', amount); // Log the received amount
 
@@ -14,7 +14,6 @@ const createCheckoutSession = async (req, res) => {
     return res.status(400).json({ message: 'Invalid amount' });
   }
 
-  const fanId = req.user ? req.user.id : 'Anonymous';
 
 
   //If Dj allows pay what you think its worth, 0 is allowed and move them to the success page

@@ -120,7 +120,7 @@ const PaymentPage = () => {
   const [customAmount, setCustomAmount] = useState('');
   const [isCustomAmount, setIsCustomAmount] = useState(false);
   const [message, setMessage] = useState('');
-  const [fanName, setFanName] = useState(''); // Initialize state for fan name
+  const [fanId, setFanId] = useState(''); // Initialize state for fan name
 
   
 
@@ -135,7 +135,7 @@ const PaymentPage = () => {
         djId,
         amount: finalAmount * 100,
         message,
-        fanId: fanName || 'Anonymous',
+        fanId: fanId,
       });
       window.location.href = response.data.url;
     } catch (error) {
@@ -191,8 +191,8 @@ const PaymentPage = () => {
         <CustomInput
           type="text"
           maxLength="20" // Limit to 20 characters
-          value={fanName}
-          onChange={(e) => setFanName(e.target.value)} // Handle name changes
+          value={fanId}
+          onChange={(e) => setFanId(e.target.value)} // Handle name changes
           placeholder="Your name (max 20 characters)"
         />
 
