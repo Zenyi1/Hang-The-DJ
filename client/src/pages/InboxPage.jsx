@@ -22,9 +22,15 @@ const InboxPage = () => {
   }, [djId]);
 
   const handleDelete = async (msgId) => {
-    // Uncomment the following line when ready to enable deletion functionality
-    await axios.delete(`http://localhost:5000/api/messages/${msgId}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
-    setMessages(prev => prev.filter(msg => msg._id !== msgId));
+    try {
+      await axios.delete(`http://localhost:5000/api/messages/${msgId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      setMessages(prev => prev.filter(msg => msg._id !== msgId));
+    } catch (error) {
+      console.error('Unable to delete message:', error);
+      // Optionally, show a message to the user here
+    }
   };
 
   return (
