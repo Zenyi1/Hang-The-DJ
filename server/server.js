@@ -11,6 +11,11 @@ const DjProfile = require('./models/DjProfileForm')
 const paymentRoutes = require('./routes/paymentRoutes');  // Payment-related routes
 const webhookController = require('./controllers/webhookController');
 const bodyParser = require('body-parser');
+// server.js or relevant file
+
+
+
+
 
 
 const app = express();
@@ -45,7 +50,7 @@ const upload = multer({
     }
 });
 
-
+const messageRoutes = require('./routes/messageRoutes');
 const stripe = require("stripe")(
   process.env.STRIPE_TEST_KEY,
   {
@@ -59,7 +64,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api', paymentRoutes);  // Use payment routes
 
-
+app.use('/api', messageRoutes); // This should be after the line where you set up express
 
 // Upload endpoint
 app.post('/upload', upload.single('profilePicture'), async (req, res) => {

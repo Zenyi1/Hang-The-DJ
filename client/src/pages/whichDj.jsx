@@ -1,118 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import styled from 'styled-components';
-
-const StyledContainer = styled.div`
-  background-color: #121212;
-  min-height: 100vh;
-  color: #fff;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Title = styled.h1`
-  font-size: 3rem;
-  text-align: center;
-  margin-bottom: 3rem;
-  color: #ffee58;
-  text-shadow: 0 0 10px rgba(255,238,88, 0.8);
-`;
-
-const SearchBar = styled.input`
-  width: 50%;
-  max-width: 500px;
-  padding: 1rem;
-  margin-bottom: 2rem;
-  border-radius: 25px;
-  border: 2px solid #ffee58;
-  background-color: #2a2a2a;
-  color: white;
-  font-size: 1.1rem;
-  outline: none;
-  transition: all 0.3s ease;
-
-  &:focus {
-    box-shadow: 0 0 10px rgba(255,238,88, 0.5);
-  }
-
-  &::placeholder {
-    color: #888;
-  }
-`;
-
-const DjCard = styled.div`
-  background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
-  border-radius: 15px;
-  padding: 2rem;
-  transition: transform 0.2s, box-shadow 0.2s;
-  width: 300px;
-  margin-top: 1rem;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(255,238,88, 0.8);
-  }
-`;
-
-const DjName = styled.h2`
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #fff;
-  text-align: center;
-`;
-
-const TipButton = styled.button`
-  background-color: #ffee58;
-  color: black;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 25px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  font-weight: bold;
-  width: 100%;
-  
-  &:hover {
-    background-color: #1ed760;
-    box-shadow: 0 0 10px rgba(29, 185, 84, 0.5);
-  }
-`;
-
-const NoResults = styled.p`
-  color: #888;
-  font-size: 1.2rem;
-  margin-top: 2rem;
-  text-align: center;
-`;
-
-const SubTitle = styled.h3`
-  color: #888;
-  font-size: 1.2rem;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  text-align: center;
-`;
-
-const ShowMoreButton = styled.button`
-  background-color: transparent;
-  color: #ffee58;
-  border: 2px solid #ffee58;
-  padding: 0.8rem 1.5rem;
-  border-radius: 25px;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-top: 2rem;
-  transition: all 0.2s;
-
-  &:hover {
-    background-color: #ffee58;
-    color: black;
-  }
-`;
 
 const ChoosePage = () => {
   const [djs, setDjs] = useState([]);
@@ -140,57 +28,56 @@ const ChoosePage = () => {
     dj.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // If there's a search term, show all filtered results
-  // If not, show either top 5 or all depending on showAll state
   const displayedDjs = searchTerm
     ? filteredDjs
     : showAll
-    ? djs
-    : djs.slice(0, 5);
+      ? djs
+      : djs.slice(0, 5);
 
   return (
-    <StyledContainer>
-      <Title>Find Your DJ</Title>
-      <SearchBar
+    <div className="bg-gray-900 min-h-screen text-white p-6 flex flex-col items-center">
+      <h1 className="text-4xl font-bold mb-6 text-yellow-400">Find Your DJ</h1>
+      <input
         type="text"
         placeholder="Search DJ by name..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-1/2 max-w-lg p-3 mb-4 rounded-lg border-2 border-yellow-400 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
       />
-      
+
       {searchTerm ? (
         filteredDjs.length === 0 ? (
-          <NoResults>No DJs found matching "{searchTerm}"</NoResults>
+          <p className="text-gray-400">No DJs found matching "{searchTerm}"</p>
         ) : (
-          <SubTitle>Search Results ({filteredDjs.length} DJs found)</SubTitle>
+          <h3 className="text-xl text-gray-300">Search Results ({filteredDjs.length} DJs found)</h3>
         )
       ) : (
-        <SubTitle>
-          {showAll ? 'All DJs' : 'Featured DJs'}
-        </SubTitle>
+        <h3 className="text-xl text-gray-300">{showAll ? 'All DJs' : 'Featured DJs'}</h3>
       )}
 
-      {displayedDjs.map(dj => (
-        <DjCard key={dj._id}>
-          <DjName>{dj.name}</DjName>
-          <TipButton onClick={() => handleTip(dj._id)}>
-            Tip DJ
-          </TipButton>
-        </DjCard>
-      ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+        {displayedDjs.map(dj => (
+          <div key={dj._id} className="bg-gray-800 p-4 rounded-lg hover:shadow-lg transition-shadow">
+            <h2 className="text-xl font-semibold">{dj.name}</h2>
+            <button onClick={() => handleTip(dj._id)} className="mt-4 w-full bg-yellow-400 text-black font-bold py-2 rounded-lg hover:bg-green-500 transition">
+              Tip DJ
+            </button>
+          </div>
+        ))}
+      </div>
 
       {!searchTerm && !showAll && djs.length > 5 && (
-        <ShowMoreButton onClick={() => setShowAll(true)}>
+        <button onClick={() => setShowAll(true)} className="mt-4 bg-transparent text-yellow-400 border-2 border-yellow-400 py-2 px-4 rounded-lg transition hover:bg-yellow-400 hover:text-black">
           Show All DJs ({djs.length})
-        </ShowMoreButton>
+        </button>
       )}
 
       {!searchTerm && showAll && (
-        <ShowMoreButton onClick={() => setShowAll(false)}>
+        <button onClick={() => setShowAll(false)} className="mt-4 bg-transparent text-yellow-400 border-2 border-yellow-400 py-2 px-4 rounded-lg transition hover:bg-yellow-400 hover:text-black">
           Show Less
-        </ShowMoreButton>
+        </button>
       )}
-    </StyledContainer>
+    </div>
   );
 };
 
