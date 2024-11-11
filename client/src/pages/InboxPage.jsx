@@ -35,10 +35,10 @@ const InboxPage = () => {
   return (
     <div className="min-h-screen bg-black flex flex-col items-center py-10">
       <button 
-        className="mb-5 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        className="mb-5 px-4 py-2 bg-white hover:bg-yellow-400 rounded"
         onClick={() => navigate(-1)}
       >
-        Back
+        <b>Back</b>
       </button>
       <h3 className="text-3xl text-white font-bold mb-5">Inbox</h3>
       <div className="w-full max-w-md">
@@ -46,14 +46,14 @@ const InboxPage = () => {
           messages.map((msg) => (
             <div 
               key={msg._id} 
-              className="bg-white p-4 rounded-lg shadow-lg mb-4 transform transition hover:scale-105"
+              className="bg-yellow-400 p-4 rounded-lg shadow-lg mb-4 transform transition hover:scale-105"
             >
               <p className="text-gray-800 text-lg mb-2">{msg.content}</p>
               <small className="text-gray-500">From: {msg.fanId} | Amount: ${msg.amountPaid.toFixed(2)}</small>
               <div className="mt-2">
                 <button 
                   onClick={() => handleDelete(msg._id)} 
-                  className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                  className="px-3 py-1 bg-black text-white rounded hover:scale-105"
                 >
                   Delete
                 </button>

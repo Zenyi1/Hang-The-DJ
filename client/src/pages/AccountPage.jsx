@@ -7,6 +7,7 @@ import {
   ConnectComponentsProvider,
 } from "@stripe/react-connect-js";
 import { FaEnvelope } from 'react-icons/fa'; // Import an icon library (like react-icons)
+import HomePage from './HomePage';
 
 const AccountPage = () => {
   const [userData, setUserData] = useState(null);
@@ -23,9 +24,11 @@ const AccountPage = () => {
   const [onboardingExited, setOnboardingExited] = useState(false);
   const [error, setError] = useState(false);
   const [connectedAccountId, setConnectedAccountId] = useState();
-  const [profilePicture, setProfilePicture] = useState(null);
+  //const [profilePicture, setProfilePicture] = useState(null);
   const stripeConnectInstance = useStripeConnect(connectedAccountId);
   const [paymentHistory, setPaymentHistory] = useState([]);
+  const [showAllPayments, setShowAllPayments] = useState(false);
+
 
   useEffect(() => {
     const fetchPaymentDetails = async () => {
@@ -173,7 +176,7 @@ const handleEditSubmit = async (e) => {
     }
   };
   
-
+/*
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -196,7 +199,7 @@ const handleEditSubmit = async (e) => {
         setMessage('Failed to upload profile picture. Please try again.');
       });
     }
-  };
+  }; */
 
   if (message && message.includes('login')) {
     return (
@@ -225,50 +228,34 @@ const handleEditSubmit = async (e) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-8">
-      <button
+    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 flex">
+
+        <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-8 w-2/3">
+        <button
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-          onClick={() => navigate(`/inbox/${userData.id}`)} // Ensure to route to new Inbox Page
+          onClick={() => navigate(`/inbox/${userData.id}`)}
         >
           <FaEnvelope size={24} />
         </button>
-      {message && !message.includes('login') && (
-        <div 
-          className={`mb-4 p-3 rounded ${
-            message.includes('Failed') 
-              ? 'bg-red-100 text-red-700' 
-              : message.includes('successfully') 
-                ? 'bg-green-100 text-green-700'
-                : 'bg-blue-100 text-blue-700'
-          }`}
-        >
-          {message}
-        </div>
-      )}
-
-        
+        {message && !message.includes('login') && (
+          <div 
+            className={`mb-4 p-3 rounded ${
+              message.includes('Failed') 
+                ? 'bg-red-100 text-red-700' 
+                : message.includes('successfully') 
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-blue-100 text-blue-700'
+            }`}
+          >
+            {message}
+          </div>
+        )}
+  
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
           Welcome, {userData.name}!
         </h2>
 
-        <div className="mb-6">
-          <input 
-            type="file" 
-            accept="image/*" 
-            onChange={handleFileChange}
-            className="mb-4" 
-          />
-          {userData.profilePicture && (
-            <img
-              src={userData.profilePicture}
-              alt="Profile"
-              className="w-32 h-32 rounded-full object-cover mx-auto"
-            />
-          )}
-          
-        </div>
-          
+        
         <div className="space-y-4">
           {isEditing ? (
             <form onSubmit={handleEditSubmit} className="space-y-4">
@@ -308,34 +295,33 @@ const handleEditSubmit = async (e) => {
             </form>
           ) : (
             <div className="border-b pb-4">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-700">Account Details</h3>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                >
-                  Edit Profile
-                </button>
-              </div>
-              <ul className="mt-2 space-y-2">
-                <li className="text-gray-600">
-                  <span className="font-medium">Email:</span> {userData.email}
-                </li>
-                <li className="text-gray-600">
-                  <span className="font-medium">Name:</span> {' '}
-                  {userData.name ? userData.name : 'Not set'}
-                </li>
-                <li className="text-gray-600">
-                  <span className="font-medium">Bio:</span> {userData.bio || 'No bio available'}
-                </li>
-              </ul>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-700">Account Details</h3>
+              <button
+                onClick={() => setIsEditing(true)}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Edit Profile
+              </button>
             </div>
-          )}
-        </div>
+            <ul className="mt-2 space-y-2">
+              <li className="text-gray-600">
+                <span className="font-medium">Email:</span> {userData.email}
+              </li>
+              <li className="text-gray-600">
+                <span className="font-medium">Name:</span> {' '}
+                {userData.name ? userData.name : 'Not set'}
+              </li>
+              <li className="text-gray-600">
+                <span className="font-medium">Bio:</span> {userData.bio || 'No bio available'}
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
 
-   {/* Payment Setup Section - Use only this version */}
-   <div className="max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg p-8">
+      {/* Payment Setup Section */}
+      <div className="max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg p-8">
         <h3 className="text-xl font-bold mb-4">Payment Setup</h3>
         <div className="container">
           <div className="content">
@@ -382,7 +368,7 @@ const handleEditSubmit = async (e) => {
                             userId: userData.id
                           })
                         });
-                        
+                      
                         const data = await response.json();
                         
                         if (data.accountId) {
@@ -412,82 +398,89 @@ const handleEditSubmit = async (e) => {
           </div>
         </div>
       </div>
+
       {/* Payment History Section */}
-{userData?.isStripeOnboarded && connectedAccountId && (
-  <div className="max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg p-8">
-    <div className="flex justify-between items-center mb-4">
-      <h3 className="text-xl font-bold">Payment History</h3>
-    </div>
-    
-    {paymentHistory.length > 0 ? (
-  <div className="space-y-4">
-    {paymentHistory.map((payment) => (
-      <div 
-        key={payment.id} 
-        className="border rounded-lg p-4 hover:bg-gray-50"
-      >
-        <div className="flex justify-between">
-          <span className="font-medium">
-            ${(payment.amount / 100).toFixed(2)}
-          </span>
-          <span className={`px-2 py-1 rounded text-sm ${
-            payment.status === 'paid' 
-              ? 'bg-green-100 text-green-800' 
-              : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {payment.status}
-          </span>
-        </div>
-        <div className="text-sm text-gray-500 mt-1">
-          {new Date(payment.created * 1000).toLocaleDateString()}
-        </div>
-        {payment.description && (
-          <div className="text-sm text-gray-500 mt-1">
-            {payment.description}
+      {userData?.isStripeOnboarded && connectedAccountId && (
+        <div className="max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg p-8">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold">Payment History</h3>
           </div>
-        )}
-      </div>
-    ))}
-  </div>
-) : (
-  <p className="text-gray-500 text-center py-4">
-    No payment history available yet
-  </p>
-)}
+          
+          {paymentHistory.length > 0 ? (
+            <div className="space-y-4">
+              {paymentHistory.slice(0, showAllPayments ? paymentHistory.length : 5).map((payment) => (
+                <div 
+                  key={payment.id} 
+                  className="border rounded-lg p-4 hover:bg-gray-50"
+                >
+                   <div className="flex justify-between">
+                    <span className="font-medium">
+                      ${(payment.amount / 100).toFixed(2)}
+                    </span>
+                    <span className={`px-2 py-1 rounded text-sm ${
+                      payment.status === 'paid' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {payment.status}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-500 mt-1">
+                    {new Date(payment.created * 1000).toLocaleDateString()}
+                  </div>
+                  {payment.description && (
+                    <div className="text-sm text-gray-500 mt-1">
+                      {payment.description}
+                    </div>
+                  )}
+                </div>
+              ))}
+              {!showAllPayments && paymentHistory.length > 5 && (
+                <button 
+                  onClick={() => setShowAllPayments(true)} 
+                  className="mt-4 text-blue-500 hover:underline"
+                >
+                  View All Payments
+                </button>
+              )}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center py-4">
+              No payment history available yet
+            </p>
+          )}
+        </div>
+      )}
 
-  </div>
-)}
-{/* Payment Link Section */}
-{userData?.isStripeOnboarded && connectedAccountId && (
-  <div className="max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg p-8">
-    <h3 className="text-xl font-bold mb-4">Your Payment Link</h3>
-    <div className="bg-gray-50 p-4 rounded-lg">
-      <p className="text-sm text-gray-600 mb-2">Share this link to receive payments:</p>
-      <div className="flex items-center space-x-2">
-        <input 
-          type="text"
-          readOnly
-          value={`${window.location.origin}/pay/${userData.id}`}
-          className="flex-1 p-2 border rounded bg-white"
-        />
-        <button
-          onClick={() => {
-            navigator.clipboard.writeText(`${window.location.origin}/pay/${userData.id}`);
-            setMessage('Link copied to clipboard!');
-            setTimeout(() => setMessage(''), 3000);
-          }}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Copy
-        </button>
-      </div>
+      {/* Payment Link Section */}
+      {userData?.isStripeOnboarded && connectedAccountId && (
+        <div className="max-w-md mx-auto mt-8 bg-white shadow-md rounded-lg p-8">
+          <h3 className="text-xl font-bold mb-4">Your Payment Link</h3>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <p className="text-sm text-gray-600 mb-2">Share this link to receive payments:</p>
+            <div className="flex items-center space-x-2">
+              <input 
+                type="text"
+                readOnly
+                value={`${window.location.origin}/pay/${userData.id}`}
+                className="flex-1 p-2 border rounded bg-white"
+              />
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/pay/${userData.id}`);
+                  setMessage('Link copied to clipboard!');
+                  setTimeout(() => setMessage(''), 3000);
+                }}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   </div>
-)}
-
-
-
-    </div>
-  )
+);
 };
 export default AccountPage;
