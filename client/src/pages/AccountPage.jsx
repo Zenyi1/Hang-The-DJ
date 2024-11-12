@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useStripeConnect } from "../hooks/useStripeConnect";
@@ -8,12 +8,16 @@ import {
 } from "@stripe/react-connect-js";
 import { FaEnvelope } from 'react-icons/fa'; // Import an icon library (like react-icons)
 import HomePage from './HomePage';
+import {QRCodeSVG} from 'qrcode.react';  // Import the QR Code component
+
 
 const AccountPage = () => {
   const [userData, setUserData] = useState(null);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+  const [showQRCode, setShowQRCode] = useState(false); // State to show/hide the QR code
+  const [qrCodeUrl, setQRCodeUrl] = useState(''); // State for the QR code URL
   const [editForm, setEditForm] = useState({
     name: '',
     bio: ''
@@ -28,6 +32,7 @@ const AccountPage = () => {
   const stripeConnectInstance = useStripeConnect(connectedAccountId);
   const [paymentHistory, setPaymentHistory] = useState([]);
   const [showAllPayments, setShowAllPayments] = useState(false);
+  const qrCodeRef = useRef(null);  // Ref to capture QR code SVG
 
 
   useEffect(() => {
@@ -104,6 +109,29 @@ const AccountPage = () => {
     checkStripeStatus();
   }, [userData?.id]);
   
+  const handleQRCodeGeneration = () => {
+    const paymentLink = `${window.location.origin}/pay/${userData.id}`;
+    setQRCodeUrl(paymentLink);
+    setShowQRCode(true);
+  };
+  
+  const handleDownloadQRCode = () => {
+    // Ensure the ref is not null and contains the SVG
+    if (qrCodeRef.current) {
+      const svg = qrCodeRef.current.innerHTML; // Get innerHTML of the ref
+      const blob = new Blob([svg], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `payment-link-${userData.id}.svg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url); // Cleanup the URL
+    } else {
+      console.error('QR Code not found');
+    }
+  };
   
 
 const handleEditSubmit = async (e) => {
@@ -475,8 +503,26 @@ const handleEditSubmit = async (e) => {
               >
                 Copy
               </button>
+              <button
+                onClick={handleQRCodeGeneration}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Generate QR Code
+              </button>
             </div>
           </div>
+          
+          {showQRCode && qrCodeUrl && (
+            <div className="mt-4">
+              <QRCodeSVG value={qrCodeUrl} size={128} />
+              <button
+                onClick={handleDownloadQRCode}
+                className="inline-block mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                  Download QR Code
+                </button>
+              </div>
+          )}
         </div>
       )}
     </div>
