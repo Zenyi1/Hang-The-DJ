@@ -8,7 +8,9 @@ import {
 } from "@stripe/react-connect-js";
 import { FaEnvelope } from 'react-icons/fa'; // Import an icon library (like react-icons)
 import HomePage from './HomePage';
-import {QRCodeSVG} from 'qrcode.react';  // Import the QR Code component
+import {QRCodeCanvas} from 'qrcode.react';  // Import the QR Code component
+import { jsPDF } from "jspdf"; // Import jsPDF
+
 
 
 const AccountPage = () => {
@@ -115,24 +117,29 @@ const AccountPage = () => {
     setShowQRCode(true);
   };
   
+  
   const handleDownloadQRCode = () => {
-    // Ensure the ref is not null and contains the SVG
-    if (qrCodeRef.current) {
-      const svg = qrCodeRef.current.innerHTML; // Get innerHTML of the ref
-      const blob = new Blob([svg], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `payment-link-${userData.id}.svg`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url); // Cleanup the URL
+    const canvas = document.getElementById('qrCodeCanvas');
+  
+    if (canvas) {
+      const imgData = canvas.toDataURL('image/png'); // Convert the canvas to PNG data URL
+  
+      // Create a new PDF document
+      const doc = new jsPDF();
+  
+      // Add the username at the top in bold yellow
+      doc.setTextColor(255, 215, 0); // Set color to yellow
+      doc.setFontSize(150);
+      doc.text(userData.name || 'DJ', 0, 50); // Add username
+
+  
+      // Add the generated image (PNG) to the PDF
+      doc.addImage(imgData, 'PNG', 60, 100, 100, 100); // 100x100 is the size of the image
+      doc.save(`payment-link-${userData.id}.pdf`); // Save the PDF with the DJ's ID
     } else {
-      console.error('QR Code not found');
+      console.error('QR Code canvas not found');
     }
   };
-  
 
 const handleEditSubmit = async (e) => {
     e.preventDefault();
@@ -512,17 +519,17 @@ const handleEditSubmit = async (e) => {
               >
                 GET QR
               </button>
-          {showQRCode && qrCodeUrl && (
-            <div className="mt-4">
-              <QRCodeSVG value={qrCodeUrl} size={128} />
-              <button
-                onClick={handleDownloadQRCode}
-                className="inline-block mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                >
-                  Download QR
-                </button>
-              </div>
-          )}
+              {showQRCode && qrCodeUrl && (
+                <div className="mt-4">
+                  <QRCodeCanvas id="qrCodeCanvas" value={qrCodeUrl} size={128} />
+                  <button
+                    onClick={handleDownloadQRCode}
+                    className="inline-block mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  >
+                    Download QR
+                  </button>
+                </div>
+              )}
           </div>
         </div>
       )}
