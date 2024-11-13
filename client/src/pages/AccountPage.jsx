@@ -503,15 +503,15 @@ const handleEditSubmit = async (e) => {
               >
                 Copy
               </button>
-              <button
+            </div>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg">
+          <button
                 onClick={handleQRCodeGeneration}
                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
               >
-                Generate QR Code
+                GET QR
               </button>
-            </div>
-          </div>
-          
           {showQRCode && qrCodeUrl && (
             <div className="mt-4">
               <QRCodeSVG value={qrCodeUrl} size={128} />
@@ -519,10 +519,11 @@ const handleEditSubmit = async (e) => {
                 onClick={handleDownloadQRCode}
                 className="inline-block mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                 >
-                  Download QR Code
+                  Download QR
                 </button>
               </div>
           )}
+          </div>
         </div>
       )}
     </div>
