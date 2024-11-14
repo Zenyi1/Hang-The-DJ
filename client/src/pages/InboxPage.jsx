@@ -7,17 +7,26 @@ const InboxPage = () => {
   const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    const fetchMessages = async () => {
+  const fetchMessages = async () => {
+    try {
       const response = await axios.get(`http://localhost:5000/api/messages/${djId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       setMessages(response.data);
-    };
+    } catch (error) {
+      console.error('Error fetching messages: ', error);
+    }
+  };
 
-    fetchMessages();
+  useEffect(() => {
+    fetchMessages(); // fetch messages initially
+
+    // Set up polling every 5 seconds (adjust as necessary)
+    const interval = setInterval(fetchMessages, 5000);
+
+    return () => clearInterval(interval); // Clear the interval on unmount
   }, [djId]);
 
   const handleDelete = async (msgId) => {
@@ -46,7 +55,7 @@ const InboxPage = () => {
           messages.map((msg) => (
             <div 
               key={msg._id} 
-              className="p-4 rounded-lg shadow-lg mb-4 transform transition bg-white hover:bg-yellow-400 hover:scale-105"
+              className="p-4 rounded-lg shadow-lg mb-4 ml-4 mr-4 transform transition bg-white hover:bg-yellow-400 hover:scale-105"
             >
               <p className="text-black text-lg mb-2">{msg.content}</p>
               <small className="text-gray-500">From: {msg.fanId} | Amount: ${msg.amountPaid.toFixed(2)}</small>

@@ -35,27 +35,27 @@ const createCheckoutSession = async () => {
 };
 
 return (
-  <div className="bg-gray-900 min-h-screen flex flex-col items-center justify-center p-6">
+  <div className="bg-black min-h-screen flex flex-col items-center justify-center p-6">
     {loading && <div className="text-yellow-400">Processing your request...</div>}
 
-    <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-lg">
-      <h2 className="text-2xl font-bold text-yellow-400 text-center mb-6">Choose Your Tip Amount</h2>
+    <div className="bg-black rounded-lg p-6 max-w-md w-full shadow-lg">
+      <h2 className="text-2xl font-bold text-white text-center mb-6">Choose Your Tip Amount</h2>
 
       <div className="grid grid-cols-3 gap-4 mb-4">
         {predefinedAmounts.map((preset) => (
           <button
             key={preset}
-            className={`flex-1 p-3 rounded-lg font-bold text-white transition ${amount === preset && !isCustomAmount ? 'bg-yellow-400' : 'bg-gray-700'} hover:bg-yellow-500`}
+            className={`flex-1 p-3 rounded-lg font-bold text-black transition ${amount === preset && !isCustomAmount ? 'bg-yellow-400' : 'bg-white'} hover:bg-yellow-400`}
             onClick={() => {
               setAmount(preset);
               setIsCustomAmount(false);
             }}
           >
-            ${preset}
+            £{preset}
           </button>
         ))}
         <button
-          className={`flex-1 p-3 rounded-lg font-bold text-white transition ${isCustomAmount ? 'bg-yellow-400' : 'bg-gray-700'} hover:bg-yellow-500`}
+          className={`flex-1 p-3 rounded-lg font-bold text-black transition ${isCustomAmount ? 'bg-yellow-400' : 'bg-white'} hover:bg-yellow-400`}
           onClick={() => setIsCustomAmount(true)}
         >
           Custom
@@ -70,7 +70,7 @@ return (
           value={customAmount}
           onChange={(e) => setCustomAmount(e.target.value)}
           placeholder="Enter amount"
-          className="w-full p-3 mb-4 rounded-lg border-2 border-yellow-400 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          className="w-full p-3 mb-4 rounded-lg border-2 border-yellow-400 bg-black text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
         />
       )}
 
@@ -82,7 +82,7 @@ return (
         value={fanId}
         onChange={(e) => setFanId(e.target.value)}
         placeholder="Your name (max 20 characters)"
-        className="w-full p-3 mb-4 rounded-lg border-2 border-yellow-400 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+        className="w-full p-3 mb-4 rounded-lg border-2 border-yellow-400 bg-black text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
       />
 
       <input
@@ -91,7 +91,7 @@ return (
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Optional message for the DJ"
-        className="w-full p-3 mb-4 rounded-lg border-2 border-yellow-400 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+        className="w-full p-3 mb-4 rounded-lg border-2 border-yellow-400 bg-black text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
       />
 
       <button
@@ -99,7 +99,7 @@ return (
         disabled={loading || (isCustomAmount && !customAmount)}
         className="w-full p-3 bg-yellow-400 text-black font-bold rounded-lg transition hover:bg-green-500 disabled:opacity-50"
       >
-        {loading ? 'Processing...' : `Tip $${isCustomAmount ? customAmount || '0' : amount}`}
+        {loading ? 'Processing...' : `Tip £${isCustomAmount ? customAmount || '0' : amount}`}
       </button>
     </div>
   </div>
