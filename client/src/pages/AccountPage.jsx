@@ -8,7 +8,6 @@ import {
 } from "@stripe/react-connect-js";
 import { FaEnvelope } from 'react-icons/fa'; // Import an icon library (like react-icons)
 import { SlArrowLeft } from 'react-icons/sl';
-import HomePage from './HomePage';
 import {QRCodeCanvas} from 'qrcode.react';  // Import the QR Code component
 import { jsPDF } from "jspdf"; // Import jsPDF
 
@@ -265,8 +264,9 @@ const handleEditSubmit = async (e) => {
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 flex">
-
-        <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-8 w-3/3">
+      
+        <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-8 w-full">
+        
         <button
           className="absolute top-4 left-4 text-gray-500 hover:text-gray-700"
           onClick={() => navigate('/')}
@@ -278,7 +278,8 @@ const handleEditSubmit = async (e) => {
           onClick={() => navigate(`/inbox/${userData.id}`)}
         >
           <FaEnvelope size={24} />
-        </button>
+        </button> 
+        
         {message && !message.includes('login') && (
           <div 
             className={`mb-4 p-3 rounded ${
