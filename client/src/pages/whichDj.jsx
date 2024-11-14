@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { QrReader } from 'react-qr-reader';
 
 const ChoosePage = () => {
   const [djs, setDjs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAll, setShowAll] = useState(false);
+  const [scanResult, setScanResult] = useState('');
+  const [isScanning, setIsScanning] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,6 +25,18 @@ const ChoosePage = () => {
 
   const handleTip = (djId) => {
     navigate(`/pay/${djId}`);
+  };
+
+  const handleScan = (data) => {
+    if (data) {
+      setScanResult(data);
+      navigate(`/pay/${data}`); // Navigate to payment with scanned DJ ID
+      setIsScanning(false);
+    }
+  };
+
+  const handleError = (err) => {
+    console.error(err);
   };
 
   const filteredDjs = djs.filter(dj =>
@@ -44,7 +59,23 @@ const ChoosePage = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="w-1/2 max-w-lg p-3 mb-4 rounded-lg border-2 border-yellow-400 bg-black text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
       />
-
+      
+      {/* QR Scanner Section 
+      <button className="mt-4 bg-transparent text-white border-2 border-yellow-400 py-2 px-4 rounded-lg transition hover:bg-yellow-400" onClick={() => setIsScanning(!isScanning)}>
+        {isScanning ? 'Close Scanner' : 'Scan QR Code'}
+      </button>
+      
+      {isScanning && (
+        <div style={{ marginTop: '20px', width: '100%' }}>
+          <QrReader
+            delay={1000}
+            onError={handleError}
+            onScan={handleScan}
+            style={{ width: '100%' }}
+          />
+        </div>
+      )}
+      */}
       {searchTerm ? (
         filteredDjs.length === 0 ? (
           <p className="text-white">No DJs found matching "{searchTerm}"</p>
