@@ -7,6 +7,7 @@ import {
   ConnectComponentsProvider,
 } from "@stripe/react-connect-js";
 import { FaEnvelope } from 'react-icons/fa'; // Import an icon library (like react-icons)
+import { SlArrowLeft } from 'react-icons/sl';
 import HomePage from './HomePage';
 import {QRCodeCanvas} from 'qrcode.react';  // Import the QR Code component
 import { jsPDF } from "jspdf"; // Import jsPDF
@@ -265,7 +266,13 @@ const handleEditSubmit = async (e) => {
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 flex">
 
-        <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-8 w-2/3">
+        <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-8 w-3/3">
+        <button
+          className="absolute top-4 left-4 text-gray-500 hover:text-gray-700"
+          onClick={() => navigate('/')}
+        >
+          <SlArrowLeft size={24} />
+        </button>
         <button
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
           onClick={() => navigate(`/inbox/${userData.id}`)}
@@ -521,7 +528,7 @@ const handleEditSubmit = async (e) => {
               </button>
               {showQRCode && qrCodeUrl && (
                 <div className="mt-4">
-                  <QRCodeCanvas id="qrCodeCanvas" value={qrCodeUrl} size={128} />
+                  <QRCodeCanvas id="qrCodeCanvas" value={qrCodeUrl} size={128} title="Hello"/>
                   <button
                     onClick={handleDownloadQRCode}
                     className="inline-block mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
