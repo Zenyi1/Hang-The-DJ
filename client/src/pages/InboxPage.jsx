@@ -46,9 +46,9 @@ const InboxPage = () => {
           messages.map((msg) => (
             <div 
               key={msg._id} 
-              className="bg-yellow-400 p-4 rounded-lg shadow-lg mb-4 transform transition hover:scale-105"
+              className="p-4 rounded-lg shadow-lg mb-4 transform transition bg-white hover:bg-yellow-400 hover:scale-105"
             >
-              <p className="text-gray-800 text-lg mb-2">{msg.content}</p>
+              <p className="text-black text-lg mb-2">{msg.content}</p>
               <small className="text-gray-500">From: {msg.fanId} | Amount: ${msg.amountPaid.toFixed(2)}</small>
               <div className="mt-2">
                 <button 
