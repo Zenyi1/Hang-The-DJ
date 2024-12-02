@@ -19,11 +19,22 @@ const bodyParser = require('body-parser');
 
 
 const app = express();
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.post('/webhook', bodyParser.raw({ type: 'application/json' }), webhookController.handleStripeWebhook);
 app.use(cors());
-app.use(express.static("dist"));
+//app.use(express.static("dist"));
 app.use(express.json());
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back index.html.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/../client/build/index.html'));
+});
+
 
 
 // Configure Multer for file uploads
@@ -174,6 +185,12 @@ app.post("/accountsetup", async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 });
+
+// Catch-all for React app
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+
 
 // Start server
 const PORT = process.env.PORT || 5000;
