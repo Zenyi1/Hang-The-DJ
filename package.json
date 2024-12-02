@@ -2,7 +2,7 @@
   "name": "hangthedj",
   "version": "1.0.0",
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "node server/server.js",
     "server": "node server/server.js",
     "client": "cd client && npm start",
     "heroku-postbuild": "cd client && npm install && npm run build && cd ../server && npm install"
