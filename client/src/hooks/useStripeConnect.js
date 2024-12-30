@@ -7,7 +7,7 @@ export const useStripeConnect = (connectedAccountId) => {
   useEffect(() => {
     if (connectedAccountId) {
       const fetchClientSecret = async () => {
-        const response = await fetch("http://localhost:5000/account_session", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/account_session`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

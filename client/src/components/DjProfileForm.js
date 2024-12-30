@@ -33,7 +33,7 @@ const DjProfileForm = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/djs', {
+      const response = await axios.post('https://hangthedjuk-c1bd4f702f97.herokuapp.com/api/djs', {
         name,
         bio,
         email,
