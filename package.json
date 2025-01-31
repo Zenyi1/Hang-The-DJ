@@ -2,10 +2,11 @@
   "name": "hangthedj",
   "version": "1.0.0",
   "scripts": {
-  "start": "node server/server.js",
-  "heroku-postbuild": "cd client && npm install && npm run build"
-},
+    "start": "node server/server.js",
+    "heroku-postbuild": "cd client && npm install && npm run build"
+  },
   "dependencies": {
-    "concurrently": "^6.0.0"
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0"
   }
 }
