@@ -1,6 +1,9 @@
 {
   "name": "hangthedj",
   "version": "1.0.0",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "start": "node server/server.js",
     "heroku-postbuild": "cd client && npm install && npm run build"
