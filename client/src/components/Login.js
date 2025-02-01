@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import config from '../config';
 
 
 const Login = () => {
@@ -15,7 +16,7 @@ const Login = () => {
     setMessage(''); // Clear previous messages
 
     try {
-      const response = await axios.post('https://hangthedjuk-c1bd4f702f97.herokuapp.com/auth/login', { email });
+      const response = await axios.post(`${config.API_URL}/auth/login`, { email });
       if (response.data.message) {
         setMessage('Verification code sent! Please check your email.');
         navigate('/verify', {state: {email}}); //pass email as a state so the user doesnt have to retype it

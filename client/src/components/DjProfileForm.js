@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for React Router v6+
+import config from '../config';
 
 const DjProfileForm = () => {
   const [name, setName] = useState('');
@@ -33,7 +34,7 @@ const DjProfileForm = () => {
     }
 
     try {
-      const response = await axios.post('https://hangthedjuk-c1bd4f702f97.herokuapp.com/api/djs', {
+      const response = await axios.post(`${config.API_URL}/djs`, {
         name,
         bio,
         email,

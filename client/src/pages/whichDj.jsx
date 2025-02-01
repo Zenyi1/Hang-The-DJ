@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import config from '../config';
 
 const ChoosePage = () => {
   const [djs, setDjs] = useState([]);
@@ -11,7 +12,7 @@ const ChoosePage = () => {
   useEffect(() => {
     const fetchDjs = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/api/djs');
+        const response = await axios.get(`${config.API_URL}/api/djs`);
         setDjs(response.data);
       } catch (error) {
         console.error('Error fetching DJs:', error);

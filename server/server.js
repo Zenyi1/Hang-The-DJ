@@ -28,7 +28,12 @@ if (process.env.NODE_ENV === 'production') {
   
 
 app.post('/webhook', bodyParser.raw({ type: 'application/json' }), webhookController.handleStripeWebhook);
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.CLIENT_URL || 'https://hangthedjs-f06eea12d185.herokuapp.com'
+    : 'http://localhost:3000',
+  credentials: true
+}));
 app.use(express.static("dist"));
 app.use(express.json());
 
